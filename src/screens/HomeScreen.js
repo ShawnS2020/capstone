@@ -3,12 +3,20 @@ import { View, Text, Button } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
       <Button
         onPress={() => navigation.navigate('Test')}
         title="To Test Screen"
       />
-    </View>
-  );
+      <Text>Another Home Screen</Text>
+      <Button
+        onPress={() => navigation.navigate('ActivityScreen')}
+        title="To Test Activity  Screen"
+        
+      />
+      
+      </View>
+
+  )
 }
