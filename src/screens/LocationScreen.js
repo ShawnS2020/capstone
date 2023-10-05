@@ -4,33 +4,39 @@ import * as Location from 'expo-location';
 
 export default function LocationScreen({ navigation }) {
   const [location, setLocation] = useState(null);
+  const [text, setText] = useState("Waiting...");
   const [errorMsg, setErrorMsg] = useState(null);
+  
+  async function handleClickLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
+    if (errorMsg) {
+      setText(errorMsg);
+    } else if (location) {
+      setText(JSON.stringify(location));
+    }
+  }
 
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
+  function handleClickNav() {
+    navigation.navigate('Home')
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.paragraph}>Current position: {text}</Text>
       <Button
-       onPress={() => navigation.navigate('Home')}
+       onPress={ handleClickLocation }
+       title="Request Location"
+      />
+      <Button
+       onPress={ handleClickNav }
        title="To Home Screen"
       />
     </View>
