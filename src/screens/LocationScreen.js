@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, Button, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
+import getPlaces from '../api/places';
 
 export default function LocationScreen({ navigation }) {
   const [location, setLocation] = useState(null);
@@ -22,6 +23,8 @@ export default function LocationScreen({ navigation }) {
     } else if (location) {
       setText(JSON.stringify(location));
     }
+
+    console.log(await getPlaces())
   }
 
   function handleClickNav() {
