@@ -1,22 +1,11 @@
 import { API_KEY } from "@env";
 import getLocation from "./location";
 
-async function getNearbyPlaces() {
-    let location = await getLocation();
-    let URL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json' +
-        `?location=${location[0]}, ${location[1]}` +
-        '&radius=15000' +
-        '&keyword=skate%20park' +
-        `&key=${API_KEY}`;
-    let response = await fetch(URL);
-    return await response.json();
-}
-
 // Backup for getTextSearchNew.
 async function getTextSearchOld() {
     let location = await getLocation();
     let url = 'https://maps.googleapis.com/maps/api/place/textsearch/json' +
-        `?query=troy%20skate%20park` +
+        `?query=skate%20park` +
         `&location=${location[0]},${location[1]}` +
         `&radius=0` +
         `&key=${API_KEY}`;
@@ -74,4 +63,4 @@ async function getPhoto(photoRef) {
     return response.url;
 }
 
-export { getTextSearchOld, getTextSearchNew, getNearbyPlaces }
+export { getTextSearchOld, getTextSearchNew }
