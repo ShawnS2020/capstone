@@ -9,8 +9,8 @@ export default function HomeScreen({ navigation }) {
         title="To Test Screen"
       />
       <Button
-        onPress={() => navigation.navigate('Forum')}
-        title="To Forum Screen"
+        onPress={() => navigation.navigate('Forum Hub')}
+        title="To Forums"
       />
     </View>
   );

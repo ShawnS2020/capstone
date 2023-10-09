@@ -1,4 +1,3 @@
-// import * as React from 'react';
 import React, { useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
 
