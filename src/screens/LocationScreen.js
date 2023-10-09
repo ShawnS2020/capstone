@@ -1,30 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Button, StyleSheet } from 'react-native';
+import { Text, FlatList, View, Button, StyleSheet, Image } from 'react-native';
 import * as Location from 'expo-location';
-import getPlaces from '../api/places';
+import { getTextSearchOld } from '../api/places';
+import getLocation from '../api/location';
 
 export default function LocationScreen({ navigation }) {
-  const [location, setLocation] = useState(null);
-  const [text, setText] = useState("Waiting...");
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [places, setPlaces] = useState(null);
   
   async function handleClickLocation() {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      setErrorMsg('Permission to access location was denied');
-      return;
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
-
-    if (errorMsg) {
-      setText(errorMsg);
-    } else if (location) {
-      setText(JSON.stringify(location));
-    }
-
-    console.log(await getPlaces())
+    setPlaces(await getTextSearchOld())
   }
 
   function handleClickNav() {
@@ -33,7 +17,18 @@ export default function LocationScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.paragraph}>Current position: {text}</Text>
+      <FlatList
+        data={places}
+        renderItem={({ item }) => (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Image
+            style={{ width: 300, height: 300 }}
+            source={{ uri: item.photoURL }}
+          />
+          <Text>{item.name}</Text>
+          </View>
+        )}
+      />
       <Button
        onPress={ handleClickLocation }
        title="Request Location"
