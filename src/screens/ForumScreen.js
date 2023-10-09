@@ -16,7 +16,6 @@ export default function ForumScreen({ navigation }) {
                 <FlatList
                     data={ texts }
                     renderItem={ ({ item }) => <Text>{ item }</Text> }
-                    // keyExtractor={ item => item }
                 />
             </View>
             <View style={ styles.bottomBar }>
