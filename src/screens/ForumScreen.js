@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#505050",
         color: "#FFFFFF",
         height: 40,
-        width: 100,
+        minWidth: 150,
+        maxWidth: 250,
         borderWidth: 1
     }
 });
