@@ -1,23 +1,34 @@
-import * as React from 'react';
+// import * as React from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
 
 export default function ForumScreen({ navigation }) {
     const [text, onChangeText] = React.useState('');
     const [texts, setTexts] = React.useState([]);
+    const flatListRef = useRef(null);
+
 
     function handleClickSend() {
         console.log(text);
-        setTexts([text, ...texts]);
+        setTexts([...texts, text]);
+    }
+
+    function handleContentSizeChange() {
+        flatListRef.current.scrollToEnd();
     }
 
     return(
         <View style={ styles.container }>
-            <View style={ styles.body }>
-                <FlatList
-                    data={ texts }
-                    renderItem={ ({ item }) => <Text>{ item }</Text> }
-                />
-            </View>
+            <FlatList
+                ref = { flatListRef }
+                style = {{ flex: 1, backgroundColor: "#C0C0C0" }}
+                contentContainerStyle={ styles.body }
+                data={ texts }
+                renderItem={ ({ item }) => (
+                    <Text style={ styles.bodyText }>{ item }</Text>
+                )}
+                onContentSizeChange={handleContentSizeChange}
+            />
             <View style={ styles.bottomBar }>
                 <TextInput
                     style={ styles.textBar }
@@ -38,16 +49,15 @@ const styles = StyleSheet.create({
         flex: 1
     },
     body: {
-        backgroundColor: "#C0C0C0",
         color: "#FFFFFF",
-        width: "100%",
-        flex: 1,
         alignItems: 'flex-end',
-        justifyContent: 'flex-end' 
+        justifyContent: 'flex-end'
     },
-    text: {
-        fontSize: 20,
-        fontWeight: 'bold'
+    bodyText: {
+        backgroundColor: "#00A0A0",
+        margin: 10,
+        padding: 10,
+        borderRadius: 5
     },
     bottomBar: {
         backgroundColor: "#101010",
