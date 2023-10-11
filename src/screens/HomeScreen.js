@@ -1,10 +1,12 @@
-import * as React from 'react';
 import { View, Text, Button } from 'react-native';
+import { observer } from 'mobx-react';
 
-export default function HomeScreen({ navigation }) {
+function HomeScreen({ navigation, route }) {
+  const { counterScreenStore } = route.params;
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
+      <Text>{counterScreenStore.counter}</Text>
       <Button
         onPress={() => navigation.navigate('Test')}
         title="To Test Screen"
@@ -12,3 +14,5 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 }
+
+export default observer(HomeScreen);

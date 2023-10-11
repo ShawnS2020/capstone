@@ -1,15 +1,16 @@
-import { View, Text, Button } from 'react-native';
+import { View, Button, TextInput } from 'react-native';
 import MyComponent from '../components/MyComponent';
 
-export default function TestScreen({ navigation }) {
+export default function TestScreen({ navigation, route }) {
+    const { counterScreenStore } = route.params;
+
     return(
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>Test Screen</Text>
             <Button
               onPress={() => navigation.navigate('Home')}
               title="To Home Screen"
             />
-            <MyComponent />
+            <MyComponent counterScreenStore={counterScreenStore} />
         </View>
     )
 }
