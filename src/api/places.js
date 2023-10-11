@@ -5,7 +5,7 @@ import getLocation from "./location";
 async function getTextSearchOld() {
     let location = await getLocation();
     let url = 'https://maps.googleapis.com/maps/api/place/textsearch/json' +
-        `?query=skate%20park` +
+        `?query=skate%20park%20troy` +
         `&location=${location[0]},${location[1]}` +
         `&radius=0` +
         `&key=${API_KEY}`;
@@ -26,6 +26,7 @@ async function getTextSearchOld() {
 }
 
 // This feature is in preview and may have limited support. Backup is getTextSearchOld.
+// For some reason this is not returning photos.
 async function getTextSearchNew() { 
     let location = await getLocation();
     let url = 'https://places.googleapis.com/v1/places:searchText'

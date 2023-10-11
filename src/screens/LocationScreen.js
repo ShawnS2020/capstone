@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, FlatList, View, Button, StyleSheet, Image } from 'react-native';
-import * as Location from 'expo-location';
 import { getTextSearchOld } from '../api/places';
-import getLocation from '../api/location';
 
 export default function LocationScreen({ navigation }) {
   const [places, setPlaces] = useState(null);
