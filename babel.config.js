@@ -1,8 +1,6 @@
 module.exports = function(api) {
   api.cache(true);
   return {
-    presets: ['babel-preset-expo'],
-    // plugins: ['transform-decorators-legacy',
-      // 'transform-class-properties',]
+    presets: ['babel-preset-expo']
   };
 };
