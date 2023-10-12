@@ -11,6 +11,10 @@ function HomeScreen({ navigation, route }) {
         onPress={() => navigation.navigate('Test')}
         title="To Test Screen"
       />
+      <Button
+        onPress={() => navigation.navigate('Location')}
+        title="To Location Screen"
+      />
     </View>
   );
 }
