@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'mobx-react';
 import counterScreenStore from './state/CounterScreenStore.js';
 import dummyAccountStore from './state/DummyAccountStore.js';
-import HomeScreen from './screens/HomeScreen.js';
+import HomeScreen from './screens/HomeScreen.js';]
+import ActivityScreen from './screens/ActivityScreen.js';
 import LocationScreen from './screens/LocationScreen.js';
 import CounterScreen from './screens/CounterScreen.js';
 
@@ -28,6 +29,10 @@ export default function App() {
           <Stack.Screen
             name="Location"
             component={LocationScreen}
+          />
+          <Stack.Screen 
+            name="ActivityScreen" 
+            component={ActivityScreen}
           />
         </Stack.Navigator>
         <StatusBar style="auto" />
