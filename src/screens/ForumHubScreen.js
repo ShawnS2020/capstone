@@ -12,7 +12,7 @@ export default function ForumHubScreen({ navigation }) {
                 title="Forum 2"
             />
         </View>
-    )
+    );
 }
 
 const styes = StyleSheet.create({
