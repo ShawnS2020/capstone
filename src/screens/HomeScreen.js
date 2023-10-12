@@ -2,14 +2,15 @@ import { View, Text, Button } from 'react-native';
 import { observer } from 'mobx-react';
 
 function HomeScreen({ navigation, route }) {
-  const { counterScreenStore } = route.params;
+  const { counterScreenStore, dummyAccountStore } = route.params;
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>{dummyAccountStore.username}</Text>
       <Text>{counterScreenStore.counter}</Text>
       <Button
-        onPress={() => navigation.navigate('Test')}
-        title="To Test Screen"
+        onPress={() => navigation.navigate('Counter')}
+        title="To Counter Screen"
       />
       <Button
         onPress={() => navigation.navigate('Location')}
