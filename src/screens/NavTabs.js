@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text } from 'react-native';
 import { Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons';
 
 import ForumHubScreen from './ForumHubScreen.js';
@@ -9,7 +8,8 @@ import AccountScreen from './AccountScreen.js';
 
 const Tab = createBottomTabNavigator();
 
-export default function NavTabs() {
+export default function NavTabs({ route }) {
+    const { dummyAccountStore } = route.params;
     return(
         <Tab.Navigator
             initialRouteName="Activities"
@@ -35,7 +35,7 @@ export default function NavTabs() {
             <Tab.Screen 
                 name="Activities" 
                 component={ActivityScreen}
-                // initialParams={{ dummyAccountStore }}
+                initialParams={{ dummyAccountStore }}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="home" color={color} size={size} />
@@ -45,7 +45,9 @@ export default function NavTabs() {
             <Tab.Screen
                 name="Account"
                 component={AccountScreen}
+                initialParams={{ dummyAccountStore }}
                 options={{
+                    title: dummyAccountStore.username,
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="account-circle" color={color} size={size} />
                     ),

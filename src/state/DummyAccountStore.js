@@ -6,15 +6,18 @@ class DummyAccountStore {
     }
 
     @observable
-    username = "Dummy";
-  
+    username = "John Smith";
+
+    @observable
+    hobbies = ["guitar", "coding", "reading", "hiking"]
+
+    @observable
+    homeLocation = [40.712626, -74.005597];
+
     @action
     changeUsername(username) {
         this.username = username;
     }
-
-    @observable
-    hobbies = ["guitar", "coding", "reading", "hiking"]
 
     @action
     addHobby(hobby) {
@@ -24,6 +27,11 @@ class DummyAccountStore {
     @action
     removeHobby(index) {
         this.hobbies.splice(index, 1);
+    }
+
+    @action
+    changeHomeLocation(location) {
+        this.homeLocation = location;
     }
 }
 
