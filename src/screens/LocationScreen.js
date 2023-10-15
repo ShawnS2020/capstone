@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Text, FlatList, View, Button, StyleSheet, Image } from 'react-native';
-import { getTextSearchOld } from '../api/places';
+import React, { useState } from 'react';
+import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Switch } from 'react-native';
+import { getPlaces } from '../api/places';
 
 export default function LocationScreen({ navigation }) {
   const [places, setPlaces] = useState(null);
-  
-  async function handleClickLocation() {
-    setPlaces(await getTextSearchOld())
+  // isOriginCurrent is true if the user prefers to use their current location as the origin.
+  // The alternative is to use the home location as the origin.
+  const [isOriginCurrent, setIsOriginCurrent] = useState(true);
+  const [radius, setRadius] = useState(10000);
+
+  function handleSwitch() {
+    setIsOriginCurrent(!isOriginCurrent);
   }
 
-  function handleClickNav() {
-    navigation.navigate('Home')
+  async function handleClickLocation() {
+    setPlaces(await getPlaces(isOriginCurrent, radius))
   }
 
   return (
@@ -27,13 +31,27 @@ export default function LocationScreen({ navigation }) {
           </View>
         )}
       />
+      <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around' }}>
+        <View style={{ alignItems: 'center' }}>
+          <Text>{isOriginCurrent ? "Using Current Location" : "Using Home Location"}</Text>
+          <Switch
+            onValueChange={handleSwitch}
+            value={isOriginCurrent}
+          />
+        </View>
+        <View style={{ alignItems: 'center' }}>
+          <Text>Change radius</Text>
+          {/* create a textInput for radius */}
+          <TextInput
+            style={{ height: 40, minWidth: 60, borderColor: 'gray', borderWidth: 1 }}
+            onChangeText={text => setRadius(text)}
+            value={`${radius}`}
+          />
+        </View>
+      </View>
       <Button
        onPress={ handleClickLocation }
-       title="Request Location"
-      />
-      <Button
-       onPress={ handleClickNav }
-       title="To Home Screen"
+       title="Load Places"
       />
     </View>
   );

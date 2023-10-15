@@ -4,12 +4,13 @@ import ForumScreen from './ForumScreen.js';
 
 const Stack = createNativeStackNavigator();
 
-export default function NavStack() {
+export default function NavStack({ dummyAccountStore }) {
     return(
         <Stack.Navigator>
             <Stack.Screen
                 name="Nav Tabs"
                 component={NavTabs}
+                initialParams={{ dummyAccountStore }}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
