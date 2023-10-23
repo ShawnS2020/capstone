@@ -1,16 +1,27 @@
-import React, { useRef } from 'react';
+import { addDoc, collection } from 'firebase/firestore';
+import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
+import { FIREBASE_DB } from '../firebaseConfig';
+// import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 
 export default function ForumScreen({ navigation }) {
     const [text, onChangeText] = React.useState('');
     const [texts, setTexts] = React.useState([]);
     const flatListRef = useRef(null);
 
+    useEffect(() => {
+        
+    }, [])
 
-    function handleClickSend() {
-        console.log(text);
-        setTexts([...texts, text]);
+    const todo = async () => {
+        const doc = addDoc(collection(FIREBASE_DB, 'test'), {title: 'I am a test', done: false});
+        console.log("Testing complete", doc)
     }
+
+    // function handleClickSend() {
+    //     console.log(text);
+    //     setTexts([...texts, text]);
+    // }
 
     function handleContentSizeChange() {
         flatListRef.current.scrollToEnd();
@@ -35,7 +46,7 @@ export default function ForumScreen({ navigation }) {
                     value={text}
                 />
                 <Button
-                    onPress={ handleClickSend }
+                    onPress={ () => todo()} 
                     title="Send"
                 />
             </View>
