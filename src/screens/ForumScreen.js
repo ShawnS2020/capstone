@@ -1,27 +1,30 @@
 import { addDoc, collection } from 'firebase/firestore';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
-import { FIREBASE_DB } from '../firebaseConfig';
+import {FIREBASE_DB} from '../firebaseConfig';
 // import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 
 export default function ForumScreen({ navigation }) {
-    const [text, onChangeText] = React.useState('');
+
     const [texts, setTexts] = React.useState([]);
+    const [text, onChangeText] = React.useState('');
     const flatListRef = useRef(null);
+    //const [txt1, setTxt1] = useState<any[koala]>([]);
+    //const [txt, setTxt] = useState('');
 
-    useEffect(() => {
-        
-    }, [])
+    useEffect(() => {}, [])
 
-    const todo = async () => {
-        const doc = addDoc(collection(FIREBASE_DB, 'test'), {title: 'I am a test', done: false});
-        console.log("Testing complete", doc)
+    const addTxt = async () => {
+        const doc = await addDoc(collection(FIREBASE_DB, 'posts'), {title: text, done: false});
+        onChangeText(text);
+        console.log("Testing", doc);
     }
 
-    // function handleClickSend() {
-    //     console.log(text);
-    //     setTexts([...texts, text]);
-    // }
+    function handleClickSend() {
+        addTxt();
+        setTexts([...texts, text]);
+        console.log(text);
+    }
 
     function handleContentSizeChange() {
         flatListRef.current.scrollToEnd();
@@ -33,7 +36,8 @@ export default function ForumScreen({ navigation }) {
                 ref = { flatListRef }
                 style = {{ flex: 1, backgroundColor: "#C0C0C0" }}
                 contentContainerStyle={ styles.body }
-                data={ texts }
+                data={texts}
+                // data={ txt }
                 renderItem={ ({ item }) => (
                     <Text style={ styles.bodyText }>{ item }</Text>
                 )}
@@ -42,12 +46,16 @@ export default function ForumScreen({ navigation }) {
             <View style={ styles.bottomBar }>
                 <TextInput
                     style={ styles.textBar }
+                    placeholder='Enter text'
                     onChangeText={onChangeText}
+                    //onChangeText={(text) => setTxt(txt)}
                     value={text}
                 />
                 <Button
-                    onPress={ () => todo()} 
+                    onPress={handleClickSend}
+                    // onPress={handleClickSend}
                     title="Send"
+                    // disabled={txt===''}
                 />
             </View>
         </View>
