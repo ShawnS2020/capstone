@@ -7,14 +7,34 @@ import { FIREBASE_DB } from '../firebaseConfig';
 export default function ForumScreen({ navigation }) {
     const [text, onChangeText] = React.useState('');
     const [texts, setTexts] = React.useState([]);
+    // const [loading, setLoading] = React.useState(true);
+    // const fbRef = doc(collection(FIREBASE_DB, 'test')); //need to fix to reference firestore collections
     const flatListRef = useRef(null);
 
-    useEffect(() => {
-        
-    }, [])
+    // will update real-time the list of documents in a given collection
+    // need to create a firestore collection component that can store all the info
+    // and be used as a sort-of constructor
+    /*useEffect(() => {
+        return fbRef.onSnapshot(querySnapshot => {
+            const list = [];
+            querySnapshot.forEach(doc => {
+                const {title, complete} = doc.data();
+                list.push({
+                    id: doc.id,
+                    title,
+                    complete,
+                });
+            });
+            setTexts(list);
+            if (loading) {
+                setLoading(false);
+            }
+        });
+    }, []);
+    */
 
     const todo = async () => {
-        const doc = addDoc(collection(FIREBASE_DB, 'test'), {title: 'I am a test', done: false});
+        const doc = addDoc(collection(FIREBASE_DB, 'test'), {title: text, done: false});
         console.log("Testing complete", doc)
     }
 
@@ -44,10 +64,12 @@ export default function ForumScreen({ navigation }) {
                     style={ styles.textBar }
                     onChangeText={onChangeText}
                     value={text}
+                    name="textInput"
                 />
                 <Button
                     onPress={ () => todo()} 
                     title="Send"
+                    type="submit"
                 />
             </View>
         </View>
