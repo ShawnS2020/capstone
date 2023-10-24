@@ -8,16 +8,35 @@ export default function ForumScreen({ navigation }) {
 
     const [texts, setTexts] = React.useState([]);
     const [text, onChangeText] = React.useState('');
+    // const [loading, setLoading] = React.useState(true);
+    // const fbRef = doc(collection(FIREBASE_DB, 'test')); //need to fix to reference firestore collections
     const flatListRef = useRef(null);
-    //const [txt1, setTxt1] = useState<any[koala]>([]);
-    //const [txt, setTxt] = useState('');
 
-    useEffect(() => {}, [])
+    // will update real-time the list of documents in a given collection
+    // need to create a firestore collection component that can store all the info
+    // and be used as a sort-of constructor
+    /*useEffect(() => {
+        return fbRef.onSnapshot(querySnapshot => {
+            const list = [];
+            querySnapshot.forEach(doc => {
+                const {title, complete} = doc.data();
+                list.push({
+                    id: doc.id,
+                    title,
+                    complete,
+                });
+            });
+            setTexts(list);
+            if (loading) {
+                setLoading(false);
+            }
+        });
+    }, []);
+    */
 
     const addTxt = async () => {
-        const doc = await addDoc(collection(FIREBASE_DB, 'posts'), {title: text, done: false});
-        onChangeText(text);
-        console.log("Testing", doc);
+        const doc = addDoc(collection(FIREBASE_DB, 'test'), {title: text, done: false});
+        console.log("Testing complete", doc)
     }
 
     function handleClickSend() {
@@ -50,12 +69,12 @@ export default function ForumScreen({ navigation }) {
                     onChangeText={onChangeText}
                     //onChangeText={(text) => setTxt(txt)}
                     value={text}
+                    name="textInput"
                 />
                 <Button
                     onPress={handleClickSend}
                     // onPress={handleClickSend}
                     title="Send"
-                    // disabled={txt===''}
                 />
             </View>
         </View>
