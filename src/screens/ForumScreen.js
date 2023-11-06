@@ -5,8 +5,9 @@ import { db,  addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, quer
 
 
 export default function ForumScreen({ navigation }) {
-    const [text, onChangeText] = React.useState('');
+
     const [texts, setTexts] = React.useState([]);
+    const [text, onChangeText] = React.useState('');
     // const [loading, setLoading] = React.useState(true);
     // const fbRef = doc(collection(db, 'test')); //need to fix to reference firestore collections
     const flatListRef = useRef(null);
@@ -35,10 +36,11 @@ export default function ForumScreen({ navigation }) {
                 // then can return the list from a function, can't do it from a const 
     }
 
-    // function handleClickSend() {
-    //     console.log(text);
-    //     setTexts([...texts, text]);
-    // }
+    function handleClickSend() {
+        addTxt();
+        setTexts([...texts, text]);
+        console.log(text);
+    }
 
     function handleContentSizeChange() {
         flatListRef.current.scrollToEnd();
@@ -50,7 +52,8 @@ export default function ForumScreen({ navigation }) {
                 ref = { flatListRef }
                 style = {{ flex: 1, backgroundColor: "#C0C0C0" }}
                 contentContainerStyle={ styles.body }
-                data={ texts }
+                data={texts}
+                // data={ txt }
                 renderItem={ ({ item }) => (
                     <Text style={ styles.bodyText }>{ item }</Text>
                 )}
@@ -64,14 +67,15 @@ export default function ForumScreen({ navigation }) {
                 />
                 <TextInput
                     style={ styles.textBar }
+                    placeholder='Enter text'
                     onChangeText={onChangeText}
+                    //onChangeText={(text) => setTxt(txt)}
                     value={text}
                     name="textInput"
                 />
                 <Button
                     onPress={ () => dbWrite()} 
                     title="Send"
-                    type="submit"
                 />
             </View>
         </View>
