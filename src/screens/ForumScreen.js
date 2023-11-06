@@ -1,41 +1,38 @@
-import { addDoc, collection } from 'firebase/firestore';
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
-import { FIREBASE_DB } from '../firebaseConfig';
+import { db,  addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query } from '../firebase';
 // import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+
 
 export default function ForumScreen({ navigation }) {
     const [text, onChangeText] = React.useState('');
     const [texts, setTexts] = React.useState([]);
     // const [loading, setLoading] = React.useState(true);
-    // const fbRef = doc(collection(FIREBASE_DB, 'test')); //need to fix to reference firestore collections
+    // const fbRef = doc(collection(db, 'test')); //need to fix to reference firestore collections
     const flatListRef = useRef(null);
 
-    // will update real-time the list of documents in a given collection
-    // need to create a firestore collection component that can store all the info
-    // and be used as a sort-of constructor
-    /*useEffect(() => {
-        return fbRef.onSnapshot(querySnapshot => {
-            const list = [];
-            querySnapshot.forEach(doc => {
-                const {title, complete} = doc.data();
-                list.push({
-                    id: doc.id,
-                    title,
-                    complete,
-                });
-            });
-            setTexts(list);
-            if (loading) {
-                setLoading(false);
-            }
-        });
-    }, []);
-    */
+    const dbWrite = async () => {
+        const docPush = addDoc(collection(db, 'test'), {title: text, done: false});
+        console.log("Testing complete", docPush)
 
-    const todo = async () => {
-        const doc = addDoc(collection(FIREBASE_DB, 'test'), {title: text, done: false});
-        console.log("Testing complete", doc)
+    }
+
+    const printCol = () => {
+        const testCollection = collection(db, "test");     // create a reference for the collection 'test' in firestore
+        const results = [];
+        getDocs(testCollection).then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log("Document ID: ", doc.id);
+                const data = doc.data();    // doc.data() is an object for all data in a document
+                console.log(doc.data().title);  // doc.data().title  gives the data for 'title' field for a document
+                results.push(data, doc.data().title);
+            });
+        }).catch((error) => {
+            console.error("Error getting docs: ", error);
+        });
+                // to show the data on the UI: can create any list/array object, and within the forEach loop above 
+                // can append the data to the list (seen in results.push(data, doc.data().title));)
+                // then can return the list from a function, can't do it from a const 
     }
 
     // function handleClickSend() {
@@ -60,6 +57,11 @@ export default function ForumScreen({ navigation }) {
                 onContentSizeChange={handleContentSizeChange}
             />
             <View style={ styles.bottomBar }>
+            <Button
+                    onPress={printCol}  // this button returns data to the console as of now
+                    title="Show Collection"
+                    type="submit"
+                />
                 <TextInput
                     style={ styles.textBar }
                     onChangeText={onChangeText}
@@ -67,7 +69,7 @@ export default function ForumScreen({ navigation }) {
                     name="textInput"
                 />
                 <Button
-                    onPress={ () => todo()} 
+                    onPress={ () => dbWrite()} 
                     title="Send"
                     type="submit"
                 />
