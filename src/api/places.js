@@ -49,9 +49,9 @@ async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) 
             continue;
         }
 
-        // Create an object with a name and url of the first photo (if there are photos).
+        // Create an object that is a copy of the result but with the field photUrl added.
         let place = {
-            name: results[i].name,
+            ...results[i],
             ...(results[i].photos && { photoURL: await getPhoto(results[i].photos[0].photo_reference) })
         };
         places.push(place);
