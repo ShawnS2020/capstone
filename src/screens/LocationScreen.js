@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Switch } from 'react-native';
 import { getPlaces } from '../api/places';
+import StarRating from '../components/star_rating';
 
 export default function LocationScreen({ navigation }) {
   const [places, setPlaces] = useState(null);
@@ -19,15 +20,39 @@ export default function LocationScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {/* <StarRating rating={2.2} /> */}
+      {/* Create a FlatList for each place */}
       <FlatList
+        contentContainerStyle={{ marginHorizontal: 10 }}
         data={places}
-        renderItem={({ item }) => (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Image
-            style={{ width: 300, height: 300 }}
-            source={{ uri: item.photoURL }}
-          />
-          <Text>{item.name}</Text>
+        renderItem={({ item: place }) => (
+          <View style={{ flex: 1, alignItems: 'left' }}>
+            {/* Create a FlatList for each photo in place.photos */}
+            {place.photoUrls.length == 0 ? (
+              <Image
+                style={styles.photo}
+                source={require('../../assets/photo_placeholder.png')}
+              />
+            ) : (
+            <FlatList
+              data={place.photoUrls}
+              renderItem={({ item: photoUrl }) => (
+                <Image
+                  style={styles.photo}
+                  source={{ uri: photoUrl }}
+                />
+              )}
+              horizontal={true}
+            />
+            )}
+            <View style={styles.placeDetails}>
+              <Text>{place.name}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text>{place.rating}</Text>
+                <StarRating rating={place.rating} />
+                <Text>({place.user_ratings_total})</Text>
+              </View>
+            </View>
           </View>
         )}
       />
@@ -62,10 +87,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
   },
   paragraph: {
     fontSize: 18,
     textAlign: 'center',
   },
+  photo: {
+    width: 140,
+    height: 140,
+    borderRadius: 10,
+    marginHorizontal: 4,
+  },
+  placeDetails: {
+    margin: 4,
+  }
 });

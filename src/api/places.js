@@ -4,9 +4,9 @@ import dummyAccountStore from "../state/DummyAccountStore";
 
 async function getPlaces(isOriginCurrent, radius) {
     const originLocation = isOriginCurrent ? await getLocation() : dummyAccountStore.homeLocation;
-    console.log(`Getting places with location: ${originLocation}`)
-    let hobbies = dummyAccountStore.hobbies;
-    let maxResultsCount = 10;
+    // let hobbies = dummyAccountStore.hobbies;
+    let hobbies = ["reading"]
+    let maxResultsCount = 3;
     let placesPerHobby = Math.round(maxResultsCount / hobbies.length);
     const places = [];
     for (let i = 0; i < hobbies.length; i++) {
@@ -37,22 +37,22 @@ async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) 
     }
     let results = json.results;
     let places = [];
-    console.log(`Found ${results.length} places for hobby: ${hobby}`)
     let i = 0;
     while (places.length < maxResultsCount && i < results.length) {
-        console.log(`Getting place ${i} for hobby: ${hobby}`)
         let destinationLocation = results[i].geometry.location;
         let distance = await getDistance(originLocation, destinationLocation);
         if (distance > radius) {
-            console.log(`Place ${i} for hobby: ${hobby} is too far away`)
             i ++;
             continue;
         }
 
-        // Create an object that is a copy of the result but with the field photUrl added.
+        // Text Search only returns one photo per place, so this function gets the rest of the photos.
+        const photoUrls = await getPhotos(results[i].place_id);
+        
+        // Create an object that is a copy of the result but with the field photUrls added.
         let place = {
             ...results[i],
-            ...(results[i].photos && { photoURL: await getPhoto(results[i].photos[0].photo_reference) })
+            photoUrls: photoUrls
         };
         places.push(place);
         i ++;
@@ -81,7 +81,26 @@ async function getDistance(origin, destination) {
     return distance;
 }
 
-async function getPhoto(photoRef) {
+// Text Search only returns one photo per place, so this function gets the rest of the photos.
+async function getPhotos(placeId) {
+    const URL = 'https://maps.googleapis.com/maps/api/place/details/json' +
+        `?place_id=${placeId}` +
+        `&fields=photos` +
+        `&key=${API_KEY}`;
+    let response = await fetch(URL);
+    let json = await response.json();
+    let photos = json.result.photos;
+    if (!photos) {
+        return [];
+    }
+    let photoRefs = [];
+    for (let i = 0; i < photos.length; i++) {
+        photoRefs.push(await getPhotoUrl(photos[i].photo_reference));
+    }
+    return photoRefs;
+}
+
+async function getPhotoUrl(photoRef) {
     const URL = "https://maps.googleapis.com/maps/api/place/photo" +
         `?photo_reference=${photoRef}` +
         "&maxwidth=1600" +
