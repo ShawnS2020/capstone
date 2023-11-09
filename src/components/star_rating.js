@@ -10,7 +10,7 @@ export default function StarRating({rating}) {
         } else if (rating >= i + 0.3) {
             iconName = "star-half-o";
         }
-        stars.push(<FontAwesome name={iconName} size={16} color="#FBBC04" />)
+        stars.push(<FontAwesome key={`${i}`} name={iconName} size={16} color="#FBBC04" />)
     }
 
     return (

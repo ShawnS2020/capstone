@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Switch } from 'react-native';
 import { getPlaces } from '../api/places';
+import testPlaces from '../api/test_places';
 import StarRating from '../components/star_rating';
 
 export default function LocationScreen({ navigation }) {
@@ -15,7 +16,8 @@ export default function LocationScreen({ navigation }) {
   }
 
   async function handleClickLocation() {
-    setPlaces(await getPlaces(isOriginCurrent, radius))
+    // setPlaces(await getPlaces(isOriginCurrent, radius))
+    setPlaces(testPlaces);
   }
 
   return (
@@ -23,10 +25,9 @@ export default function LocationScreen({ navigation }) {
       {/* <StarRating rating={2.2} /> */}
       {/* Create a FlatList for each place */}
       <FlatList
-        contentContainerStyle={{ marginHorizontal: 10 }}
         data={places}
         renderItem={({ item: place }) => (
-          <View style={{ flex: 1, alignItems: 'left' }}>
+          <View style={styles.placeContainer}>
             {/* Create a FlatList for each photo in place.photos */}
             {place.photoUrls.length == 0 ? (
               <Image
@@ -47,11 +48,12 @@ export default function LocationScreen({ navigation }) {
             )}
             <View style={styles.placeDetails}>
               <Text>{place.name}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={styles.ratingsLine}>
                 <Text>{place.rating}</Text>
                 <StarRating rating={place.rating} />
                 <Text>({place.user_ratings_total})</Text>
               </View>
+              <Text>{place.formatted_address}</Text>
             </View>
           </View>
         )}
@@ -92,13 +94,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
+  placeContainer: {
+    alignItems: 'left',
+    marginVertical: 8,
+    padding: 8,
+    backgroundColor: '#FFF',
+  },
   photo: {
     width: 140,
     height: 140,
     borderRadius: 10,
-    marginHorizontal: 4,
+    marginLeft: 8,
+    marginRight: 2,
   },
   placeDetails: {
-    margin: 4,
+    margin: 8,
+  },
+  ratingsLine: {
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 });
