@@ -1,5 +1,5 @@
 import { API_KEY } from "@env";
-import getLocation from "./location";
+import getLocation from "./ExpoLocation";
 import dummyAccountStore from "../state/DummyAccountStore";
 
 async function getPlaces(isOriginCurrent, radius) {
@@ -46,14 +46,20 @@ async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) 
             continue;
         }
 
-        // Text Search only returns one photo per place, so this function gets the rest of the photos.
-        const photoUrls = await getPhotos(results[i].place_id);
+        // Get more fields using the Place Details API.
+        const details = await getDetails(results[i].place_id);
         
         // Create an object that is a copy of the result but with the field photUrls added.
         let place = {
             ...results[i],
-            photoUrls: photoUrls
         };
+
+        // For each field in details, add the field to place.
+        for (const [key, value] of Object.entries(details)) {
+            place[key] = value;
+        }
+
+        // console.log(place);
         places.push(place);
         i ++;
     }
@@ -81,23 +87,32 @@ async function getDistance(origin, destination) {
     return distance;
 }
 
-// Text Search only returns one photo per place, so this function gets the rest of the photos.
-async function getPhotos(placeId) {
+// This function calls the Place Details API to get the fields website, vicinity, and photos.
+// The function also calls getPhotoUrl to get the URL for each photo.
+async function getDetails(placeId) {
     const URL = 'https://maps.googleapis.com/maps/api/place/details/json' +
         `?place_id=${placeId}` +
-        `&fields=photos` +
+        `&fields=photos,website,vicinity` +
         `&key=${API_KEY}`;
     let response = await fetch(URL);
     let json = await response.json();
-    let photos = json.result.photos;
-    if (!photos) {
-        return [];
+    // Create an object with website, vicinity, and photoUrls.
+    // If any of these fields are missing, omit them from the object.
+    let details = {};
+    if (json.result.photos) {
+        let photoUrls = [];
+        for (let i = 0; i < json.result.photos.length; i++) {
+            photoUrls.push(await getPhotoUrl(json.result.photos[i].photo_reference));
+        }
+        details.photoUrls = photoUrls;
     }
-    let photoRefs = [];
-    for (let i = 0; i < photos.length; i++) {
-        photoRefs.push(await getPhotoUrl(photos[i].photo_reference));
+    if (json.result.website) {
+        details.website = json.result.website;
     }
-    return photoRefs;
+    if (json.result.vicinity) {
+        details.vicinity = json.result.vicinity;
+    }
+    return details;
 }
 
 async function getPhotoUrl(photoRef) {

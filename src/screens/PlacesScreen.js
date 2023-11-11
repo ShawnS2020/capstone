@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Switch } from 'react-native';
-import { getPlaces } from '../api/places';
-import testPlaces from '../api/test_places';
-import StarRating from '../components/star_rating';
+import { getPlaces } from '../api/PlacesAPI';
+import testPlaces from '../api/TestPlaces';
+import PlacesMenu from '../components/PlacesMenu';
+import FilterSort from '../components/FilterSort';
+import StarRating from '../components/StarRating';
 
-export default function LocationScreen({ navigation }) {
+export default function PlacesScreen({ isMenuOpen }) {
   const [places, setPlaces] = useState(null);
   // isOriginCurrent is true if the user prefers to use their current location as the origin.
   // The alternative is to use the home location as the origin.
-  const [isOriginCurrent, setIsOriginCurrent] = useState(true);
+  const [isOriginCurrent, setIsOriginCurrent] = useState(false);
   const [radius, setRadius] = useState(10000);
 
   function handleSwitch() {
@@ -16,12 +18,16 @@ export default function LocationScreen({ navigation }) {
   }
 
   async function handleClickLocation() {
-    // setPlaces(await getPlaces(isOriginCurrent, radius))
-    setPlaces(testPlaces);
+    // Un-comment the following two lines to use test data.
+    // setPlaces(testPlaces);
+    // return;
+    setPlaces(await getPlaces(isOriginCurrent, radius))
   }
 
   return (
     <View style={styles.container}>
+      { isMenuOpen ? <PlacesMenu /> : null}
+      {/* <PlacesMenu /> */}
       {/* <StarRating rating={2.2} /> */}
       {/* Create a FlatList for each place */}
       <FlatList
@@ -29,7 +35,7 @@ export default function LocationScreen({ navigation }) {
         renderItem={({ item: place }) => (
           <View style={styles.placeContainer}>
             {/* Create a FlatList for each photo in place.photos */}
-            {place.photoUrls.length == 0 ? (
+            {!('photoUrls' in place) ? (
               <Image
                 style={styles.photo}
                 source={require('../../assets/photo_placeholder.png')}
@@ -54,6 +60,7 @@ export default function LocationScreen({ navigation }) {
                 <Text>({place.user_ratings_total})</Text>
               </View>
               <Text>{place.formatted_address}</Text>
+              <Text>{place.website}</Text>
             </View>
           </View>
         )}
