@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Switch } from 'react-native';
+import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Linking, TouchableOpacity, Switch } from 'react-native';
 import { getPlaces } from '../api/PlacesAPI';
 import testPlaces from '../api/TestPlaces';
 import PlacesMenu from '../components/PlacesMenu';
@@ -57,13 +57,12 @@ export default function PlacesScreen({ isMenuOpen }) {
           sortDirection={sortDirection}
         /> : null
       }
-      {/* <PlacesMenu /> */}
-      {/* <StarRating rating={2.2} /> */}
       {/* Create a FlatList for each place */}
       <FlatList
         data={places}
         renderItem={({ item: place }) => (
           <View style={styles.placeContainer}>
+            <Text style={styles.placeHobby}>{place.hobby.charAt(0).toUpperCase() + place.hobby.slice(1)}</Text>
             {/* Create a FlatList for each photo in place.photos */}
             {!('photoUrls' in place) ? (
               <Image
@@ -80,6 +79,9 @@ export default function PlacesScreen({ isMenuOpen }) {
                 />
               )}
               horizontal={true}
+              ItemSeparatorComponent={() => <View style={{ width: 8 }} />}
+              ListHeaderComponent={() => <View style={{ width: 8 }} />}
+              ListFooterComponent={() => <View style={{ width: 8 }} />}
             />
             )}
             <View style={styles.placeDetails}>
@@ -90,7 +92,9 @@ export default function PlacesScreen({ isMenuOpen }) {
                 <Text>({place.user_ratings_total})</Text>
               </View>
               <Text>{place.formatted_address}</Text>
-              <Text>{place.website}</Text>
+              <TouchableOpacity onPress={() => Linking.openURL(place.website)}>
+                <Text style={styles.websiteLink}>{place.website}</Text>
+              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -134,15 +138,18 @@ const styles = StyleSheet.create({
   placeContainer: {
     alignItems: 'left',
     marginVertical: 8,
-    padding: 8,
+    paddingVertical: 8,
     backgroundColor: '#FFF',
+  },
+  placeHobby: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    margin: 8,
   },
   photo: {
     width: 140,
     height: 140,
     borderRadius: 10,
-    marginLeft: 8,
-    marginRight: 2,
   },
   placeDetails: {
     margin: 8,
@@ -150,5 +157,8 @@ const styles = StyleSheet.create({
   ratingsLine: {
     flexDirection: 'row',
     alignItems: 'center'
-  }
+  },
+  websiteLink: {
+    color: '#0070E0',
+  },
 });

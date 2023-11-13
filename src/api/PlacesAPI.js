@@ -52,6 +52,7 @@ async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) 
         // Create an object that is a copy of the result but with the field photUrls added.
         let place = {
             ...results[i],
+            hobby: hobby,
         };
 
         // For each field in details, add the field to place.
