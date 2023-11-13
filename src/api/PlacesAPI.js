@@ -4,11 +4,11 @@ import dummyAccountStore from "../state/DummyAccountStore";
 
 async function getPlaces(isOriginCurrent, radius) {
     const originLocation = isOriginCurrent ? await getLocation() : dummyAccountStore.homeLocation;
-    // let hobbies = dummyAccountStore.hobbies;
-    let hobbies = ["reading"]
-    let maxResultsCount = 3;
+    let hobbies = dummyAccountStore.hobbies;
+    let maxResultsCount = 20;
     let placesPerHobby = Math.round(maxResultsCount / hobbies.length);
     const places = [];
+    // For each hobby, get place objects using getTextSearchOld and add them to places array.
     for (let i = 0; i < hobbies.length; i++) {
         let thisHobbyPlaces = await getTextSearchOld(originLocation, radius, hobbies[i], placesPerHobby);
         places.push(...thisHobbyPlaces);
@@ -46,7 +46,7 @@ async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) 
             continue;
         }
 
-        // Get more fields using the Place Details API.
+        // The text search API call only gets a limited set of details so we call Place Details API for a full set.
         const details = await getDetails(results[i].place_id);
         
         // Create an object that is a copy of the result but with the field photUrls added.

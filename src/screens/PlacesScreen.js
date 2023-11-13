@@ -3,18 +3,39 @@ import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Switch } fr
 import { getPlaces } from '../api/PlacesAPI';
 import testPlaces from '../api/TestPlaces';
 import PlacesMenu from '../components/PlacesMenu';
-import FilterSort from '../components/FilterSort';
 import StarRating from '../components/StarRating';
 
 export default function PlacesScreen({ isMenuOpen }) {
   const [places, setPlaces] = useState(null);
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [sortType, setSortType] = useState('none'); // ['none', 'hobby', 'rating', 'review count', 'distance']
+  const [sortDirection, setSortDirection] = useState('asc.');
   // isOriginCurrent is true if the user prefers to use their current location as the origin.
   // The alternative is to use the home location as the origin.
   const [isOriginCurrent, setIsOriginCurrent] = useState(false);
   const [radius, setRadius] = useState(10000);
+  const [enabledFilters, setEnabledFilters] = useState([]);
 
   function handleSwitch() {
     setIsOriginCurrent(!isOriginCurrent);
+  }
+
+  function handleClickSortType(sortType) {
+    setSortType(sortType);
+    setIsSortDropdownOpen(!isSortDropdownOpen);
+  }
+
+  function handleClickSortDirection() {
+    setSortDirection(sortDirection === 'asc.' ? 'desc.' : 'asc.');
+  }
+
+  function handleClickFilterItem(filter) {
+    if (enabledFilters.includes(filter)) {
+      setEnabledFilters(enabledFilters.filter(f => f !== filter));
+    }
+    else {
+      setEnabledFilters([...enabledFilters, filter]);
+    }
   }
 
   async function handleClickLocation() {
@@ -26,7 +47,16 @@ export default function PlacesScreen({ isMenuOpen }) {
 
   return (
     <View style={styles.container}>
-      { isMenuOpen ? <PlacesMenu /> : null}
+      { isMenuOpen ? 
+        <PlacesMenu 
+          handleClickSortType={handleClickSortType}
+          handleClickSortDirection={handleClickSortDirection}
+          handleClickFilterItem={handleClickFilterItem}
+          isSortDropdownOpen={isSortDropdownOpen}
+          sortType={sortType}
+          sortDirection={sortDirection}
+        /> : null
+      }
       {/* <PlacesMenu /> */}
       {/* <StarRating rating={2.2} /> */}
       {/* Create a FlatList for each place */}

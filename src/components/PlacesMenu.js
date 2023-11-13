@@ -1,21 +1,41 @@
 import { View, Text, StyleSheet } from 'react-native';
-import FilterSort from '../components/FilterSort';
+import Sort from './Sort';
+import Filter from './Filter';
 
-export default function PlacesMenu() {
+export default function PlacesMenu({
+    handleClickSortType,
+    handleClickSortDirection,
+    handleClickFilterItem,
+    isSortDropdownOpen,
+    sortType,
+    sortDirection,
+    isFilterDropdownOpen
+}) {
     return (
         <View style={styles.container}>
-            <FilterSort />
+            <Sort
+                handleClickSortType={handleClickSortType}
+                handleClickSortDirection={handleClickSortDirection}
+                isSortDropdownOpen={isSortDropdownOpen}
+                sortType={sortType}
+                sortDirection={sortDirection}
+            />
+            <Filter
+                handleClickFilterItem={handleClickFilterItem}
+                isFilterDropdownOpen={isFilterDropdownOpen}
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
+        width: '75%',
         position: 'absolute',
         zIndex: 1,
         alignSelf: 'flex-end',
         top: 0,
-        backgroundColor: '#F2F2F2',
+        backgroundColor: '#CCCCCC',
         padding: 16,
         alignItems: 'center',
         height: '100%',
