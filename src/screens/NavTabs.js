@@ -1,18 +1,17 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useState } from 'react';
+import { inject } from 'mobx-react';
 import { Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons';
 import NavTabsHeader from '../components/NavTabsHeader.js';
 import ForumHubScreen from './ForumHubScreen.js';
-import ActivityScreen from './ActivityScreen.js';
 import PlacesScreen from './PlacesScreen.js';
 import AccountScreen from './AccountScreen.js';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
-export default function NavTabs({ route }) {
+export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { dummyAccountStore } = route.params;
     let routeTitle = getFocusedRouteNameFromRoute(route) ?? 'Places';
     if (routeTitle === 'Forum Hub') {
         routeTitle = 'Forums';
@@ -48,8 +47,6 @@ export default function NavTabs({ route }) {
             <Tab.Screen
                 name="Places"
                 children={() => <PlacesScreen isMenuOpen={isMenuOpen} />}
-                // component={PlacesScreen}
-                // initialParams={{ isMenuOpen: isMenuOpen }}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="compass" color={color} size={size} />
@@ -59,7 +56,6 @@ export default function NavTabs({ route }) {
             <Tab.Screen
                 name="Account"
                 component={AccountScreen}
-                initialParams={{ dummyAccountStore }}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="account-circle" color={color} size={size} />
@@ -68,4 +64,4 @@ export default function NavTabs({ route }) {
             />
         </Tab.Navigator>
     );
-}
+});

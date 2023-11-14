@@ -14,6 +14,9 @@ class DummyAccountStore {
     @observable
     homeLocation = [40.712626, -74.005597];
 
+    @observable
+    useCurrentLocation = true;
+
     @action
     changeUsername(username) {
         this.username = username;
@@ -32,6 +35,11 @@ class DummyAccountStore {
     @action
     changeHomeLocation(location) {
         this.homeLocation = location;
+    }
+
+    @action
+    toggleUseCurrentLocation() {
+        this.useCurrentLocation = !this.useCurrentLocation;
     }
 }
 
