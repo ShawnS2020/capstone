@@ -32,8 +32,7 @@ export default function PlacesScreen({ isMenuOpen }) {
   function handleClickFilterItem(filter) {
     if (enabledFilters.includes(filter)) {
       setEnabledFilters(enabledFilters.filter(f => f !== filter));
-    }
-    else {
+    } else {
       setEnabledFilters([...enabledFilters, filter]);
     }
   }
@@ -55,6 +54,7 @@ export default function PlacesScreen({ isMenuOpen }) {
           isSortDropdownOpen={isSortDropdownOpen}
           sortType={sortType}
           sortDirection={sortDirection}
+          enabledFilters={enabledFilters}
         /> : null
       }
       {/* Create a FlatList for each place */}

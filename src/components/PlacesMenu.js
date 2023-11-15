@@ -9,7 +9,7 @@ export default function PlacesMenu({
     isSortDropdownOpen,
     sortType,
     sortDirection,
-    isFilterDropdownOpen
+    enabledFilters
 }) {
     return (
         <View style={styles.container}>
@@ -22,7 +22,7 @@ export default function PlacesMenu({
             />
             <Filter
                 handleClickFilterItem={handleClickFilterItem}
-                isFilterDropdownOpen={isFilterDropdownOpen}
+                enabledFilters={enabledFilters}
             />
         </View>
     );

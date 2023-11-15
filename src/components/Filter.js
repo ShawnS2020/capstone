@@ -1,9 +1,19 @@
 import { View, Text, TouchableWithoutFeedback, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import dummyAccountStore from '../state/DummyAccountStore';
 
-export default function FilterDropdown({ handleClickFilterItem, isFilterDropdownOpen }) {
+export default function FilterDropdown({ handleClickFilterItem, enabledFilters }) {
     const filters = ['1 mile', '5 miles', '10 miles', '$', '$$', '$$$', '$$$$', ...dummyAccountStore.hobbies]
+    // Sort filters so that elements that exist in enabledFilters are at the beginning of filters.
+    filters.sort((a, b) => {
+        if (enabledFilters.includes(a) && !enabledFilters.includes(b)) {
+            return -1;
+        } else if (!enabledFilters.includes(a) && enabledFilters.includes(b)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
 
     return (
         <View style={styles.container}>
@@ -11,8 +21,9 @@ export default function FilterDropdown({ handleClickFilterItem, isFilterDropdown
             <View style={styles.filterItemsContainer}>
                 {filters.map((filter, i) => (
                     <TouchableWithoutFeedback key={i} onPress={() => handleClickFilterItem(filter)}>
-                        <View style={styles.filterItem}>
-                            <Text style={styles.text}>{filter}</Text>
+                        <View style={[styles.filterItem, enabledFilters.includes(filter) && styles.selectedFilterItem]}>
+                            <Text style={[styles.text, styles.filterText]}>{filter}</Text>
+                            {enabledFilters.includes(filter) && <AntDesign name="close" size={16} color="black" style={styles.icon} />}
                         </View>
                     </TouchableWithoutFeedback>
                 ))}
@@ -26,10 +37,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
-    heading: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
     filterItemsContainer: {
         borderColor: 'black',
         alignItems: 'center',
@@ -41,19 +48,29 @@ const styles = StyleSheet.create({
     },
     filterItem: {
         display: 'inline-block',
+        flexDirection: 'row',
         minWidth: 64,
         alignItems: 'center',
+        justifyContent: 'center',
         marginHorizontal: 4,
         paddingHorizontal: 4,
-        backgroundColor: '#AAAAFF',
+        backgroundColor: '#CCCCFF',
         borderWidth: 1,
         borderColor: 'black',
         borderRadius: 24,
+        height: 24
+    },
+    selectedFilterItem: {
+        backgroundColor: '#7777FF',
+        paddingRight: 24,
+    },
+    filterText: {
     },
     text: {
         fontSize: 16,
     },
     icon: {
-        marginLeft: 8
+        position: 'absolute',
+        right: 4
     }
 });
