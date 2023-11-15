@@ -2,8 +2,13 @@ import { API_KEY } from "@env";
 import getLocation from "./ExpoLocation";
 import dummyAccountStore from "../state/DummyAccountStore";
 
-async function getPlaces(isOriginCurrent, radius) {
-    const originLocation = isOriginCurrent ? await getLocation() : dummyAccountStore.homeLocation;
+async function getPlaces(radius) {
+    const originLocation = dummyAccountStore.useCurrentLocation ? await getLocation() : dummyAccountStore.homeLocation;
+
+    if (originLocation == null) {
+        return null;
+    }
+
     let hobbies = dummyAccountStore.hobbies;
     let maxResultsCount = 20;
     let placesPerHobby = Math.round(maxResultsCount / hobbies.length);

@@ -15,7 +15,7 @@ class DummyAccountStore {
     homeLocation = [40.712626, -74.005597];
 
     @observable
-    useCurrentLocation = true;
+    useCurrentLocation = false;
 
     @action
     changeUsername(username) {

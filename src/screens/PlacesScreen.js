@@ -41,7 +41,11 @@ export default function PlacesScreen({ isMenuOpen }) {
     // Un-comment the following two lines to use test data.
     // setPlaces(testPlaces);
     // return;
-    setPlaces(await getPlaces(isOriginCurrent, radius))
+    const places = await getPlaces(radius);
+    if (places == null) {
+      return;
+    }
+    setPlaces(places);
   }
 
   return (
@@ -100,13 +104,6 @@ export default function PlacesScreen({ isMenuOpen }) {
         )}
       />
       <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around' }}>
-        <View style={{ alignItems: 'center' }}>
-          <Text>{isOriginCurrent ? "Using Current Location" : "Using Home Location"}</Text>
-          <Switch
-            onValueChange={handleSwitch}
-            value={isOriginCurrent}
-          />
-        </View>
         <View style={{ alignItems: 'center' }}>
           <Text>Change radius</Text>
           {/* create a textInput for radius */}

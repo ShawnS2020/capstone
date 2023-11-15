@@ -6,9 +6,11 @@ export default function NavTabsHeader({ routeTitle, handleClickMenu }) {
     return (
         <View style={styles.container}>
             <Text style={styles.text}>{routeTitle}</Text>
-            <TouchableWithoutFeedback onPress={handleClickMenu}>
-                <Ionicons name='menu' size={28} color="black" style={styles.icon} />
-            </TouchableWithoutFeedback>
+            {routeTitle === 'Places' && (
+                <TouchableWithoutFeedback onPress={handleClickMenu}>
+                    <Ionicons name='menu' size={28} color="black" style={styles.icon} />
+                </TouchableWithoutFeedback>
+            )}
         </View>
     )
 }
