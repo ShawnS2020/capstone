@@ -29,7 +29,7 @@ export default function SortDropdown({
     let iconName = (sortDirection == 'asc.') ? 'caret-down' : 'caret-up';
 
     return (
-        <View style={styles.sortContainer}>
+        <View style={styles.container}>
             <Text style={styles.text}>Sort by:</Text>
             <View style={styles.dropdown}>
                 {isSortDropdownOpen ? menuItems : menuItems[0]}
@@ -45,11 +45,10 @@ export default function SortDropdown({
 }
 
 const styles = StyleSheet.create({
-    sortContainer: {
+    container: {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginVertical: 16,
         fontSize: 28,
     },
     text: {

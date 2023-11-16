@@ -1,24 +1,17 @@
 import React, { useState } from 'react';
-import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Linking, TouchableOpacity, Switch } from 'react-native';
+import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Linking, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { getPlaces } from '../api/PlacesAPI';
-import testPlaces from '../api/TestPlaces';
 import PlacesMenu from '../components/PlacesMenu';
 import StarRating from '../components/StarRating';
 
 export default function PlacesScreen({ isMenuOpen }) {
+  const [isLoading, setIsLoading] = useState(false);
   const [places, setPlaces] = useState(null);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
-  const [sortType, setSortType] = useState('none'); // ['none', 'hobby', 'rating', 'review count', 'distance']
+  const [sortType, setSortType] = useState('none');
   const [sortDirection, setSortDirection] = useState('asc.');
-  // isOriginCurrent is true if the user prefers to use their current location as the origin.
-  // The alternative is to use the home location as the origin.
-  const [isOriginCurrent, setIsOriginCurrent] = useState(false);
-  const [radius, setRadius] = useState(10000);
   const [enabledFilters, setEnabledFilters] = useState([]);
-
-  function handleSwitch() {
-    setIsOriginCurrent(!isOriginCurrent);
-  }
+  const [radius, setRadius] = useState(10000);
 
   function handleClickSortType(sortType) {
     setSortType(sortType);
@@ -37,11 +30,18 @@ export default function PlacesScreen({ isMenuOpen }) {
     }
   }
 
+  function handleClickApplySortAndFilters() {
+    /***
+     * 
+     * Logic for applying sort and filters to places
+     * 
+     * ***/
+  }
+
   async function handleClickLocation() {
-    // Un-comment the following two lines to use test data.
-    // setPlaces(testPlaces);
-    // return;
+    setIsLoading(true);
     const places = await getPlaces(radius);
+    setIsLoading(false);
     if (places == null) {
       return;
     }
@@ -55,15 +55,20 @@ export default function PlacesScreen({ isMenuOpen }) {
           handleClickSortType={handleClickSortType}
           handleClickSortDirection={handleClickSortDirection}
           handleClickFilterItem={handleClickFilterItem}
+          handleClickApplySortAndFilters={handleClickApplySortAndFilters}
           isSortDropdownOpen={isSortDropdownOpen}
           sortType={sortType}
           sortDirection={sortDirection}
           enabledFilters={enabledFilters}
         /> : null
       }
+      { isLoading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : null }
       {/* Create a FlatList for each place */}
       <FlatList
         data={places}
+        ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
         renderItem={({ item: place }) => (
           <View style={styles.placeContainer}>
             <Text style={styles.placeHobby}>{place.hobby.charAt(0).toUpperCase() + place.hobby.slice(1)}</Text>
@@ -96,6 +101,7 @@ export default function PlacesScreen({ isMenuOpen }) {
                 <Text>({place.user_ratings_total})</Text>
               </View>
               <Text>{place.formatted_address}</Text>
+              <Text>{place.distance} miles</Text>
               <TouchableOpacity onPress={() => Linking.openURL(place.website)}>
                 <Text style={styles.websiteLink}>{place.website}</Text>
               </TouchableOpacity>
@@ -134,7 +140,6 @@ const styles = StyleSheet.create({
   },
   placeContainer: {
     alignItems: 'left',
-    marginVertical: 8,
     paddingVertical: 8,
     backgroundColor: '#FFF',
   },

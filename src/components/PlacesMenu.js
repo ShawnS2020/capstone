@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet } from 'react-native';
 import Sort from './Sort';
 import Filter from './Filter';
 
@@ -6,6 +6,7 @@ export default function PlacesMenu({
     handleClickSortType,
     handleClickSortDirection,
     handleClickFilterItem,
+    handleClickApplySortAndFilters,
     isSortDropdownOpen,
     sortType,
     sortDirection,
@@ -24,6 +25,11 @@ export default function PlacesMenu({
                 handleClickFilterItem={handleClickFilterItem}
                 enabledFilters={enabledFilters}
             />
+            <Button
+                title='Apply'
+                onPress={handleClickApplySortAndFilters}
+                color='black'
+            />
         </View>
     );
 }
@@ -35,9 +41,14 @@ const styles = StyleSheet.create({
         zIndex: 1,
         alignSelf: 'flex-end',
         top: 0,
-        backgroundColor: '#CCCCCC',
+        backgroundColor: '#DDD',
+        rowGap: 32,
         padding: 16,
         alignItems: 'center',
         height: '100%',
     },
+    applyButton: {
+        borderRadius: 50,
+        backgroundColor: 'black',
+    }
 });

@@ -50,6 +50,8 @@ async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) 
             i ++;
             continue;
         }
+        // Convert distance from meters to miles and round to the nearest 100th.
+        let distanceMi = Math.round(distance * 0.000621371192 * 100) / 100;
 
         // The text search API call only gets a limited set of details so we call Place Details API for a full set.
         const details = await getDetails(results[i].place_id);
@@ -58,14 +60,14 @@ async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) 
         let place = {
             ...results[i],
             hobby: hobby,
+            distance: distanceMi,
         };
 
-        // For each field in details, add the field to place.
+        // For each field in details, add that field to place.
         for (const [key, value] of Object.entries(details)) {
             place[key] = value;
         }
 
-        // console.log(place);
         places.push(place);
         i ++;
     }

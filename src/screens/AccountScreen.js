@@ -1,7 +1,5 @@
 import { observer, inject } from 'mobx-react';
 import { View, Text, FlatList, Image, StyleSheet, Switch } from 'react-native';
-import { useState } from 'react';
-
 
 export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
     const keyExtractor = (item, index) => index.toString();
@@ -9,7 +7,7 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
     function toggleUseCurrentLocation() {
         dummyAccountStore.toggleUseCurrentLocation();
     }
-    
+
     return(
         <View style={styles.container}>
             <Image 
