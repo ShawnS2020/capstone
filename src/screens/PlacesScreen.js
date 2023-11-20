@@ -3,6 +3,7 @@ import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Linking, To
 import { getPlaces } from '../api/PlacesAPI';
 import PlacesMenu from '../components/PlacesMenu';
 import StarRating from '../components/StarRating';
+import testPlaces from '../api/TestPlaces';
 
 export default function PlacesScreen({ isMenuOpen }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +41,9 @@ export default function PlacesScreen({ isMenuOpen }) {
 
   async function handleClickLocation() {
     setIsLoading(true);
-    const places = await getPlaces(radius);
+    // Comment out the next line and uncomment the following line to use the real API.
+    const places = testPlaces;
+    // const places = await getPlaces(radius);
     setIsLoading(false);
     if (places == null) {
       return;
