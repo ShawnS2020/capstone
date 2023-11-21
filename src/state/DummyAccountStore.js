@@ -12,7 +12,7 @@ class DummyAccountStore {
     hobbies = ["guitar", "coding", "reading", "hiking"]
 
     @observable
-    homeLocation = [40.712626, -74.005597];
+    homeLocation = { description: 'City Hall, New York, NY, USA', coordinates: [40.712626, -74.005597] };
 
     @observable
     useCurrentLocation = false;

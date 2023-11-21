@@ -42,8 +42,8 @@ export default function PlacesScreen({ isMenuOpen }) {
   async function handleClickLocation() {
     setIsLoading(true);
     // Comment out the next line and uncomment the following line to use the real API.
-    const places = testPlaces;
-    // const places = await getPlaces(radius);
+    // const places = testPlaces;
+    const places = await getPlaces(radius);
     setIsLoading(false);
     if (places == null) {
       return;

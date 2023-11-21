@@ -3,7 +3,7 @@ import getLocation from "./ExpoLocation";
 import dummyAccountStore from "../state/DummyAccountStore";
 
 async function getPlaces(radius) {
-    const originLocation = dummyAccountStore.useCurrentLocation ? await getLocation() : dummyAccountStore.homeLocation;
+    const originLocation = dummyAccountStore.useCurrentLocation ? await getLocation() : dummyAccountStore.homeLocation.coordinates;
 
     if (originLocation == null) {
         return null;
