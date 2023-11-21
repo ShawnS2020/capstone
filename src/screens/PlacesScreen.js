@@ -39,16 +39,18 @@ export default function PlacesScreen({ isMenuOpen }) {
      * ***/
   }
 
-  async function handleClickLocation() {
+  async function handleClickLoadFeed() {
     setIsLoading(true);
-    // Comment out the next line and uncomment the following line to use the real API.
-    // const places = testPlaces;
     const places = await getPlaces(radius);
     setIsLoading(false);
     if (places == null) {
       return;
     }
     setPlaces(places);
+  }
+
+  function handleClickLoadFeedTestData() {
+    setPlaces(testPlaces);
   }
 
   return (
@@ -122,11 +124,15 @@ export default function PlacesScreen({ isMenuOpen }) {
             value={`${radius}`}
           />
         </View>
-      </View>
       <Button
-       onPress={ handleClickLocation }
-       title="Load Places"
+       onPress={ handleClickLoadFeed }
+       title="Load Places (API)"
       />
+      <Button
+       onPress={ handleClickLoadFeedTestData }
+       title="Load test data"
+      />
+      </View>
     </View>
   );
 }
