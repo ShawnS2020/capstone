@@ -1,15 +1,47 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
+import { getAuth, db,  addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query } from '../firebase';
+// import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+
 
 export default function ForumScreen({ navigation }) {
-    const [text, onChangeText] = React.useState('');
+
+    const auth = getAuth();
+    const userID = auth.currentUser.uid;
     const [texts, setTexts] = React.useState([]);
+    const [text, onChangeText] = React.useState('');
+    // const [loading, setLoading] = React.useState(true);
+    // const fbRef = doc(collection(db, 'test')); //need to fix to reference firestore collections
     const flatListRef = useRef(null);
 
+    const dbWrite = async () => {
+        const docPush = addDoc(collection(db, 'test'), {title: text, done: false});
+        console.log("Testing complete", docPush)
+
+    }
+
+    const printCol = () => {
+        const testCollection = collection(db, "test");     // create a reference for the collection 'test' in firestore
+        const results = [];
+        getDocs(testCollection).then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log("Document ID: ", doc.id);
+                const data = doc.data();    // doc.data() is an object for all data in a document
+                console.log(doc.data().title);  // doc.data().title  gives the data for 'title' field for a document
+                results.push(data, doc.data().title);
+            });
+        }).catch((error) => {
+            console.error("Error getting docs: ", error);
+        });
+                // to show the data on the UI: can create any list/array object, and within the forEach loop above 
+                // can append the data to the list (seen in results.push(data, doc.data().title));)
+                // then can return the list from a function, can't do it from a const 
+    }
 
     function handleClickSend() {
-        console.log(text);
+        addTxt();
         setTexts([...texts, text]);
+        console.log(text);
     }
 
     function handleContentSizeChange() {
@@ -22,20 +54,29 @@ export default function ForumScreen({ navigation }) {
                 ref = { flatListRef }
                 style = {{ flex: 1, backgroundColor: "#C0C0C0" }}
                 contentContainerStyle={ styles.body }
-                data={ texts }
+                data={texts}
+                // data={ txt }
                 renderItem={ ({ item }) => (
                     <Text style={ styles.bodyText }>{ item }</Text>
                 )}
                 onContentSizeChange={handleContentSizeChange}
             />
             <View style={ styles.bottomBar }>
+            <Button
+                    onPress={printCol}  // this button returns data to the console as of now
+                    title="Show Collection"
+                    type="submit"
+                />
                 <TextInput
                     style={ styles.textBar }
+                    placeholder='Enter text'
                     onChangeText={onChangeText}
+                    //onChangeText={(text) => setTxt(txt)}
                     value={text}
+                    name="textInput"
                 />
                 <Button
-                    onPress={ handleClickSend }
+                    onPress={ () => dbWrite()} 
                     title="Send"
                 />
             </View>
