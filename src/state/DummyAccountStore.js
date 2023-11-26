@@ -12,7 +12,10 @@ class DummyAccountStore {
     hobbies = ["guitar", "coding", "reading", "hiking"]
 
     @observable
-    homeLocation = [40.712626, -74.005597];
+    homeLocation = { description: 'City Hall, New York, NY, USA', coordinates: [40.712626, -74.005597] };
+
+    @observable
+    useCurrentLocation = false;
 
     @action
     changeUsername(username) {
@@ -32,6 +35,11 @@ class DummyAccountStore {
     @action
     changeHomeLocation(location) {
         this.homeLocation = location;
+    }
+
+    @action
+    toggleUseCurrentLocation() {
+        this.useCurrentLocation = !this.useCurrentLocation;
     }
 }
 

@@ -1,14 +1,19 @@
 import { API_KEY } from "@env";
-import getLocation from "./location";
+import getLocation from "./ExpoLocation";
 import dummyAccountStore from "../state/DummyAccountStore";
 
-async function getPlaces(isOriginCurrent, radius) {
-    const originLocation = isOriginCurrent ? await getLocation() : dummyAccountStore.homeLocation;
-    console.log(`Getting places with location: ${originLocation}`)
+async function getPlaces(radius) {
+    const originLocation = dummyAccountStore.useCurrentLocation ? await getLocation() : dummyAccountStore.homeLocation.coordinates;
+
+    if (originLocation == null) {
+        return null;
+    }
+
     let hobbies = dummyAccountStore.hobbies;
-    let maxResultsCount = 10;
+    let maxResultsCount = 20;
     let placesPerHobby = Math.round(maxResultsCount / hobbies.length);
     const places = [];
+    // For each hobby, get place objects using getTextSearchOld and add them to places array.
     for (let i = 0; i < hobbies.length; i++) {
         let thisHobbyPlaces = await getTextSearchOld(originLocation, radius, hobbies[i], placesPerHobby);
         places.push(...thisHobbyPlaces);
@@ -37,23 +42,32 @@ async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) 
     }
     let results = json.results;
     let places = [];
-    console.log(`Found ${results.length} places for hobby: ${hobby}`)
     let i = 0;
     while (places.length < maxResultsCount && i < results.length) {
-        console.log(`Getting place ${i} for hobby: ${hobby}`)
         let destinationLocation = results[i].geometry.location;
         let distance = await getDistance(originLocation, destinationLocation);
         if (distance > radius) {
-            console.log(`Place ${i} for hobby: ${hobby} is too far away`)
             i ++;
             continue;
         }
+        // Convert distance from meters to miles and round to the nearest 100th.
+        let distanceMi = Math.round(distance * 0.000621371192 * 100) / 100;
 
-        // Create an object with a name and url of the first photo (if there are photos).
+        // The text search API call only gets a limited set of details so we call Place Details API for a full set.
+        const details = await getDetails(results[i].place_id);
+        
+        // Create an object that is a copy of the result but with the field photUrls added.
         let place = {
-            name: results[i].name,
-            ...(results[i].photos && { photoURL: await getPhoto(results[i].photos[0].photo_reference) })
+            ...results[i],
+            hobby: hobby,
+            distance: distanceMi,
         };
+
+        // For each field in details, add that field to place.
+        for (const [key, value] of Object.entries(details)) {
+            place[key] = value;
+        }
+
         places.push(place);
         i ++;
     }
@@ -81,7 +95,35 @@ async function getDistance(origin, destination) {
     return distance;
 }
 
-async function getPhoto(photoRef) {
+// This function calls the Place Details API to get the fields website, vicinity, and photos.
+// The function also calls getPhotoUrl to get the URL for each photo.
+async function getDetails(placeId) {
+    const URL = 'https://maps.googleapis.com/maps/api/place/details/json' +
+        `?place_id=${placeId}` +
+        `&fields=photos,website,vicinity` +
+        `&key=${API_KEY}`;
+    let response = await fetch(URL);
+    let json = await response.json();
+    // Create an object with website, vicinity, and photoUrls.
+    // If any of these fields are missing, omit them from the object.
+    let details = {};
+    if (json.result.photos) {
+        let photoUrls = [];
+        for (let i = 0; i < json.result.photos.length; i++) {
+            photoUrls.push(await getPhotoUrl(json.result.photos[i].photo_reference));
+        }
+        details.photoUrls = photoUrls;
+    }
+    if (json.result.website) {
+        details.website = json.result.website;
+    }
+    if (json.result.vicinity) {
+        details.vicinity = json.result.vicinity;
+    }
+    return details;
+}
+
+async function getPhotoUrl(photoRef) {
     const URL = "https://maps.googleapis.com/maps/api/place/photo" +
         `?photo_reference=${photoRef}` +
         "&maxwidth=1600" +

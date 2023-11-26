@@ -1,42 +1,159 @@
-import { observer } from 'mobx-react';
-import { View, Text, FlatList, Image} from 'react-native';
+import { useState, useRef } from 'react';
+import { observer, inject } from 'mobx-react';
+import { View, Text, ScrollView, TouchableWithoutFeedback, Image, StyleSheet, Switch, TextInput } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons'; 
+import { getPredictions, getCoordinates } from '../api/PlaceAutocomplete';
 
+export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
+    const [homeLocation, setHomeLocation] = useState(dummyAccountStore.homeLocation);
+    const [isEditingHomeLocation, setIsEditingHomeLocation] = useState(false);
+    const [iconName, setIconName] = useState('mode-edit');
+    const [searchQuery, setSearchQuery] = useState(homeLocation.description);
+    const [textInputYPosition, setTextInputYPosition] = useState(0);
+    const [predictions, setPredictions] = useState([]);
+    const scrollViewRef = useRef();
 
-function AccountScreen({ route }) {
-    const { dummyAccountStore } = route.params;
-    const keyExtractor = (item, index) => index.toString();
-    return(
-    
-        <View style={{backgroundColor:'white'}}>
+    async function handleEditHomeLocation() {
+        setIsEditingHomeLocation(!isEditingHomeLocation);
+        if (!isEditingHomeLocation) {
+            setIconName('check');
+        } else {
+            setIconName('mode-edit');
+            // Update Account Store if homeLocation has changed.
+            // This check is necessary because homeLocation.place_id will not exist unless a prediction is selected.
+            if (homeLocation.description != dummyAccountStore.homeLocation.description) {
+                const coordinates = await getCoordinates(homeLocation.place_id);
+                dummyAccountStore.changeHomeLocation({ description: homeLocation.description, coordinates: [coordinates.lat, coordinates.lng] });
+            }
+        }
+    }
+
+    async function handleHomeLocationOnChange() {
+        const predictions = await getPredictions(searchQuery);
+        setPredictions(predictions);
+    }
+
+    function toggleUseCurrentLocation() {
+        dummyAccountStore.toggleUseCurrentLocation();
+    }
+
+    return (
+        // Add a ScrollView to wrap this View
+        <ScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.container}>
             <Image 
-        source={{uri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSOUNJZAWeC9NIB0R7h22mZwfRMTEHr7PBDNihFBmmR4U8fklya'}}
-        style={{width: 100, height: 100, alignSelf: 'center' }}
+                source={{uri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSOUNJZAWeC9NIB0R7h22mZwfRMTEHr7PBDNihFBmmR4U8fklya'}}
+                style={{width: 100, height: 100, alignSelf: 'center' }}
             />
-            <View style={{paddingHorizontal:30,marginBottom: 25}}>
-                <Text style={{textAlign: 'center',fontSize: 24,fontWeight: 'bold', marginTop:15, marginBottom:5}}> John Smith </Text>
+            <Text style={styles.usernameText}>{dummyAccountStore.username}</Text>
+            <Text style={[styles.text, styles.header]}>Hobbies</Text>
+            {dummyAccountStore.hobbies.map((hobby, index) => (
+                <Text key={index}>{hobby.charAt(0).toUpperCase() + hobby.slice(1)}</Text>
+            ))}
+            <Text style={styles.header}>Home Location</Text>
+            <View style={styles.row}>
+                <Text style={styles.homeLocation}>{homeLocation.description}</Text>
+                <TouchableWithoutFeedback onPress={handleEditHomeLocation}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialIcons name={iconName} size={24} />
+                    </View>
+                </TouchableWithoutFeedback>
             </View>
-
-            <View style={{paddingHorizontal:30,marginBottom: 25}}>
-            <Text style={{textAlign: 'center',fontSize:15,fontWeight: 'bold', marginTop:15, marginBottom:5}}>Hobbies</Text>
-            <FlatList style={{textAlign: 'center',fontSize:15,fontWeight: 'bold', marginTop:15, marginBottom:5}}
-                data={dummyAccountStore.hobbies}
-                renderItem={({ item }) => <Text style={{textAlign: 'center'}}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>}
-                keyExtractor={keyExtractor}
-            />
+            {isEditingHomeLocation && (
+                <>
+                    <TextInput
+                        onLayout={(event) => setTextInputYPosition(event.nativeEvent.layout.y)}
+                        selectTextOnFocus={true}
+                        onChangeText={(text) => {
+                            setSearchQuery(text);
+                            handleHomeLocationOnChange();
+                            scrollViewRef.current.scrollTo({ y: textInputYPosition });
+                        }}
+                        value={searchQuery}
+                        style={styles.searchBar}
+                    />
+                    {predictions.map((prediction, index) => (
+                        <TouchableWithoutFeedback key={index} onPress={() => {
+                            setHomeLocation(prediction);
+                            setSearchQuery(prediction.structured_formatting.main_text);
+                        }}>
+                        <View key={index} style={styles.searchQueryPrediction}>
+                            <Text style={styles.searchQueryPredictionMainText}>{prediction.structured_formatting.main_text}</Text>
+                            <Text style={styles.searchQueryPredictionSecondaryText}>{prediction.structured_formatting.secondary_text}</Text>
+                            <View style={styles.searchQueryPredictionDivider} />
+                        </View>
+                        </TouchableWithoutFeedback>
+                    ))}
+                </>
+            )}
+            <View style={styles.useCurrentLocationSwitch}>
+              <Text>Use current Location</Text>
+              <Switch
+                value={dummyAccountStore.useCurrentLocation}
+                onValueChange={toggleUseCurrentLocation}
+              />
             </View>
-
-
-        <View style={{paddingHorizontal:30,marginBottom: 25}}>
-            <Text style={{textAlign: 'center',fontSize:15,fontWeight: 'bold', marginTop:15, marginBottom:5}}>Home Location</Text>
-            <Text style={{textAlign: 'center'}}>{dummyAccountStore.homeLocation.join(", ")}</Text>
         </View>
-        </View>
-        
-      
-        
-        
-        
+        </ScrollView>
     );
-}
+}));
 
-export default observer(AccountScreen);
+const styles = StyleSheet.create({
+    container: {
+        height: '100%',
+        alignItems: 'center',
+        backgroundColor: '#FFF'
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    usernameText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginVertical: 8,
+    },
+    header: {
+        fontWeight: 'bold',
+        marginVertical: 8,
+    },
+    hobbyList: {
+        flexGrow: 0,
+    },
+    homeLocation: {
+        maxWidth: '80%',
+    },
+    searchBar: {
+        minWidth: 280,
+        height: 36,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 20,
+        marginVertical: 8,
+        paddingHorizontal: 8,
+    },
+    searchQueryPrediction: {
+        minWidth: 280,
+
+    },
+    searchQueryPredictionMainText: {
+    },
+    searchQueryPredictionSecondaryText: {
+        color: 'gray',
+    },
+    searchQueryPredictionDivider: {
+        borderBottomColor: 'gray',
+        borderBottomWidth: 1,
+        marginVertical: 4,
+    },
+    text: {
+        fontSize: 16,
+    },
+    useCurrentLocationSwitch: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        justifyContent: 'space-around',
+    },
+});

@@ -9,7 +9,7 @@ export default function App() {
   return (
     <Provider dummyAccountStore={dummyAccountStore}>
       <NavigationContainer>
-        <NavStack dummyAccountStore={dummyAccountStore} />
+        <NavStack />
         <StatusBar style="auto" />
       </NavigationContainer>
     </Provider>

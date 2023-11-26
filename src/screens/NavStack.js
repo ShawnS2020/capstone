@@ -1,10 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import NavTabs from './NavTabs.js';
 import ForumScreen from './ForumScreen.js';
+import { inject } from 'mobx-react';
 
 const Stack = createNativeStackNavigator();
 
-export default function NavStack({ dummyAccountStore }) {
+export default inject('dummyAccountStore')(NavStack = ({ dummyAccountStore }) => {
     return(
         <Stack.Navigator>
             <Stack.Screen
@@ -20,4 +21,4 @@ export default function NavStack({ dummyAccountStore }) {
         </Stack.Navigator>
 
     );
-}
+});
