@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
-import { db,  addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query } from '../firebase';
+import { getAuth, db,  addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query } from '../firebase';
 // import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 
 
 export default function ForumScreen({ navigation }) {
 
+    const auth = getAuth();
+    const userID = auth.currentUser.uid;
     const [texts, setTexts] = React.useState([]);
     const [text, onChangeText] = React.useState('');
     // const [loading, setLoading] = React.useState(true);

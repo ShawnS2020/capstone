@@ -5,6 +5,9 @@ import HomeScreen from './screens/HomeScreen.js';
 import TestScreen from './screens/TestScreen.js';
 import ForumHubScreen from './screens/ForumHubScreen.js';
 import ForumScreen from './screens/ForumScreen.js';
+import LoginScreen from './screens/LoginScreen.js';
+import Subforum from './components/Subforum.js';
+import Thread from './components/Thread.js';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +30,18 @@ export default function App() {
         <Stack.Screen
           name="Forum"
           component={ForumScreen}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+        />
+        <Stack.Screen
+          name="Subforum"
+          component={Subforum}
+        />
+        <Stack.Screen
+          name="Thread"
+          component={Thread}
         />
       </Stack.Navigator>
       <StatusBar style="auto" />

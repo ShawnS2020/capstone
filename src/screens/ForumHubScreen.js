@@ -11,6 +11,10 @@ export default function ForumHubScreen({ navigation }) {
                 onPress={() => navigation.navigate('Forum')}
                 title="Forum 2"
             />
+            <Button
+                onPress={() => navigation.navigate('Login')}
+                title="Login/Register"
+            />
         </View>
     )
 }

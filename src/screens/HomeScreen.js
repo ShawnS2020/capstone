@@ -5,6 +5,10 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Button
+        onPress={() => navigation.navigate('Login')}
+        title="Login/Register"
+      />
+      <Button
         onPress={() => navigation.navigate('Test')}
         title="To Test Screen"
       />
