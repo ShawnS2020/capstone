@@ -26,8 +26,8 @@ const LoginScreen = ( {navigation} ) => {
             console.log(userCredential.user.email, "is logged in");
             if (userCredential)
             {
-                navigation.navigate("Home")     // navgiate to "Home" route from App.js . If login happens on forums, navigate 
-            }                                   // to Forum screen instead?
+                navigation.navigate("Forum")     // navgiate to "ForumScreen" route from App.js . Navigate somewhere else instead?
+            }                                   
         }).catch(error => alert(error.message));
     }
 
