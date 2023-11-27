@@ -1,12 +1,14 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, TextInput, Text, View, Platform, Image } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
+import { useAuth } from '../state/AuthContext';
 
 export default function LoginScreen({ navigation }) {
 
     const auth = getAuth();
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const { login } = useAuth();
 
 
     const handleRegistration = () => {
@@ -22,9 +24,11 @@ export default function LoginScreen({ navigation }) {
         signInWithEmailAndPassword(auth, email, password)       
         .then((userCredential) => {                 
             console.log(userCredential.user.email, "is logged in");
+            login();
             if (userCredential)                     // if user successfully logs
             {
-                navigation.navigate("Forum")        // navgiate to "ForumScreen" route from App.js . Navigate somewhere else instead?
+                // navigation.navigate("Forum")        // navgiate to "ForumScreen" route from App.js . Navigate somewhere else instead?
+                navigation.navigate("Nav Tabs");
             }                                   
         }).catch(error => alert(error.message));
     }
@@ -60,21 +64,25 @@ export default function LoginScreen({ navigation }) {
                 </View>
         
                 <View style={styles.buttonCont}>
+                    <View style={{flexDirection: 'row'}}>
+                        <TouchableOpacity
+                            onPress = {handleLogin}
+                            style = {styles.button}
+                        >
+                            <Text style = {styles.buttonText}> Log in  </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={login}
+                        >
+                            <Text>Bypass</Text>
+                        </TouchableOpacity>
+                    </View>
                     <TouchableOpacity
-                    onPress = {handleLogin}
-                    style = {styles.button}
-                    >
-                        <Text style = {styles.buttonText}> Log in  </Text>
-                    </TouchableOpacity>
-        
-                    <TouchableOpacity
-                    onPress={handleRegistration}
-                    style={[styles.button]}
+                        onPress={handleRegistration}
+                        style={[styles.button]}
                     >
                         <Text style = {styles.buttonOutlineText}> Create User </Text>
-        
                     </TouchableOpacity>
-        
                 </View>
               </View>
     )

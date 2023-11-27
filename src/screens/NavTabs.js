@@ -4,14 +4,14 @@ import { inject } from 'mobx-react';
 import { Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons';
 import NavTabsHeader from '../components/NavTabsHeader.js';
 import PlacesScreen from './PlacesScreen.js';
-import ForumScreen from './ForumScreen.js';
 import LoginScreen from './LoginScreen.js';
 import AccountScreen from './AccountScreen.js';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import ForumHubScreen from './ForumHubScreen.js';
 
 const Tab = createBottomTabNavigator();
 
-export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
+export default function NavTabs({ route }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     let routeTitle = getFocusedRouteNameFromRoute(route) ?? 'Places';
     if (routeTitle === 'Forum Hub') {
@@ -22,7 +22,7 @@ export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
         setIsMenuOpen(!isMenuOpen);
     }
 
-    return(
+    return (
         <Tab.Navigator
             initialRouteName="Places"
             screenOptions={{
@@ -36,7 +36,8 @@ export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
         >
             <Tab.Screen
                 name = "Forum Hub"
-                component={LoginScreen}
+                component={ForumHubScreen}
+                // component={LoginScreen}
                 options={{
                     title: "Forums",
                     tabBarIcon: ({ color, size }) => (
@@ -65,4 +66,4 @@ export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
             />
         </Tab.Navigator>
     );
-});
+}
