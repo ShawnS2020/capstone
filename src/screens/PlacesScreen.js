@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Text, TextInput, FlatList, View, Button, StyleSheet, Image, Linking, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { getPlaces } from '../api/PlacesAPI';
+import { Text, FlatList, View, Button, StyleSheet, Image, Linking, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { getPlaces, getDistanceAndDetails } from '../api/PlacesAPI';
 import PlacesMenu from '../components/PlacesMenu';
 import StarRating from '../components/StarRating';
 import testPlaces from '../api/TestPlaces';
@@ -12,7 +12,6 @@ export default function PlacesScreen({ isMenuOpen }) {
   const [sortType, setSortType] = useState('none');
   const [sortDirection, setSortDirection] = useState('asc.');
   const [enabledFilters, setEnabledFilters] = useState([]);
-  const [radius, setRadius] = useState(10000);
 
   function handleClickSortType(sortType) {
     setSortType(sortType);
@@ -39,14 +38,19 @@ export default function PlacesScreen({ isMenuOpen }) {
      * ***/
   }
 
+  // This is the main function that loads places from the APIs.
+  // Photos, distance from user, and website links are loaded in after the initial load.
   async function handleClickLoadFeed() {
     setIsLoading(true);
-    const places = await getPlaces(radius);
+    const places = await getPlaces();
     setIsLoading(false);
     if (places == null) {
       return;
     }
     setPlaces(places);
+    console.log("Places set");
+    await getDistanceAndDetails(places);
+    console.log("Distance and details set");
   }
 
   function handleClickLoadFeedTestData() {
@@ -106,32 +110,28 @@ export default function PlacesScreen({ isMenuOpen }) {
                 <Text>({place.user_ratings_total})</Text>
               </View>
               <Text>{place.formatted_address}</Text>
-              <Text>{place.distance} miles</Text>
-              <TouchableOpacity onPress={() => Linking.openURL(place.website)}>
-                <Text style={styles.websiteLink}>{place.website}</Text>
-              </TouchableOpacity>
+              {/* if place.distance is null then indicate loading */}
+              <Text>{place.distance == null ? 'loading distance...' : place.distance + ' miles'}</Text>
+              {/* if place.website is null then indicate loading */}
+              {place.website == null ?
+                <Text>loading website...</Text> :
+                <TouchableOpacity onPress={() => Linking.openURL(place.website)}>
+                  <Text style={styles.websiteLink}>{place.website}</Text>
+                </TouchableOpacity>
+              }
             </View>
           </View>
         )}
       />
       <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around' }}>
-        <View style={{ alignItems: 'center' }}>
-          <Text>Change radius</Text>
-          {/* create a textInput for radius */}
-          <TextInput
-            style={{ height: 40, minWidth: 60, borderColor: 'gray', borderWidth: 1 }}
-            onChangeText={text => setRadius(text)}
-            value={`${radius}`}
-          />
-        </View>
-      <Button
-       onPress={ handleClickLoadFeed }
-       title="Load Places (API)"
-      />
-      <Button
-       onPress={ handleClickLoadFeedTestData }
-       title="Load test data"
-      />
+        <Button
+         onPress={ handleClickLoadFeed }
+         title="Load Places (API)"
+        />
+        <Button
+         onPress={ handleClickLoadFeedTestData }
+         title="Load test data"
+        />
       </View>
     </View>
   );

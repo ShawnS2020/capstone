@@ -1,28 +1,23 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useState } from 'react';
-import { inject } from 'mobx-react';
 import { Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons';
-import NavTabsHeader from '../components/NavTabsHeader.js';
-import PlacesScreen from './PlacesScreen.js';
-import ForumScreen from './ForumScreen.js';
-import LoginScreen from './LoginScreen.js';
-import AccountScreen from './AccountScreen.js';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import NavTabsHeader from '../components/NavTabsHeader.js';
+import ForumStack from './ForumStack.js';
+import PlacesScreen from './PlacesScreen.js';
+import AccountScreen from './AccountScreen.js';
 
 const Tab = createBottomTabNavigator();
 
-export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
+export default function NavTabs({ route }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     let routeTitle = getFocusedRouteNameFromRoute(route) ?? 'Places';
-    if (routeTitle === 'Forum Hub') {
-        routeTitle = 'Forums';
-    }
 
     function handleClickMenu() {
         setIsMenuOpen(!isMenuOpen);
     }
 
-    return(
+    return (
         <Tab.Navigator
             initialRouteName="Places"
             screenOptions={{
@@ -35,14 +30,13 @@ export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
             }}
         >
             <Tab.Screen
-                name = "Forum Hub"
-                component={LoginScreen}
+                name = "Forum Stack"
+                component={ForumStack}
                 options={{
-                    title: "Forums",
+                    headerShown: false,
                     tabBarIcon: ({ color, size }) => (
                         <Entypo name="chat" color={color} size={size} />
                     ),
-
                 }}
             />
             <Tab.Screen
@@ -65,4 +59,4 @@ export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
             />
         </Tab.Navigator>
     );
-});
+}
