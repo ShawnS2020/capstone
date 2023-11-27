@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }) {
                style={{width: 200, height: 200}} />
                 <View style = {styles.headerCont}>
                     <Text style = {styles.headerText}>
-                        Hobbyism
+                        Hobbyist
                     </Text>
                     
                 </View>
