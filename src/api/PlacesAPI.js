@@ -2,7 +2,7 @@ import { API_KEY } from "@env";
 import getLocation from "./ExpoLocation";
 import dummyAccountStore from "../state/DummyAccountStore";
 
-async function getPlaces(radius) {
+async function getPlaces() {
     const originLocation = dummyAccountStore.useCurrentLocation ? await getLocation() : dummyAccountStore.homeLocation.coordinates;
 
     if (originLocation == null) {
@@ -10,69 +10,74 @@ async function getPlaces(radius) {
     }
 
     let hobbies = dummyAccountStore.hobbies;
-    let maxResultsCount = 20;
-    let placesPerHobby = Math.round(maxResultsCount / hobbies.length);
     const places = [];
-    // For each hobby, get place objects using getTextSearchOld and add them to places array.
-    for (let i = 0; i < hobbies.length; i++) {
-        let thisHobbyPlaces = await getTextSearchOld(originLocation, radius, hobbies[i], placesPerHobby);
+    // For each hobby, get place objects using getTextSearch and add them to places array.
+    /*** Handle these asynchronously ***/
+    const promises = Array.from({ length: hobbies.length }, async (_, i) => {
+        let thisHobbyPlaces = await getTextSearch(originLocation, /*radius,*/ hobbies[i]/*, placesPerHobby*/);
         places.push(...thisHobbyPlaces);
-    }
+    });
+    await Promise.all(promises);
+
     return places;
 }
 
-// Backup for getTextSearchNew.
 // This function gets places using the Google Places TextSearch API.
-// The API takes a query, location, and radius and returns a list of places.
-// We use a hobby as the query, the user's current or home location as the location, and a radius given by the developer.
-// *** TODO: radius control is only accessible now for testing purposes ***
-async function getTextSearchOld(originLocation, radius, hobby, maxResultsCount) {
+// The API takes a query and location and returns a list of places.
+// We use a hobby as the query and the user's current or home location as the location.
+async function getTextSearch(originLocation, hobby) {
     console.log(`Getting places for hobby: ${hobby}`)
     const URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json' +
         `?query=${hobby}` +
         `&location=${originLocation[0]},${originLocation[1]}` +
-        `&radius=${radius}` +
         `&key=${API_KEY}`;
     let response = await fetch(URL);
     let json = await response.json();
     if (json.status != "OK") {
-        console.log("Error in getTextSearchOld")
+        console.log("Error in getTextSearch")
         console.log(json);
         return;
     }
     let results = json.results;
     let places = [];
-    let i = 0;
-    while (places.length < maxResultsCount && i < results.length) {
-        let destinationLocation = results[i].geometry.location;
-        let distance = await getDistance(originLocation, destinationLocation);
-        if (distance > radius) {
-            i ++;
-            continue;
-        }
-        // Convert distance from meters to miles and round to the nearest 100th.
-        let distanceMi = Math.round(distance * 0.000621371192 * 100) / 100;
-
-        // The text search API call only gets a limited set of details so we call Place Details API for a full set.
-        const details = await getDetails(results[i].place_id);
-        
-        // Create an object that is a copy of the result but with the field photUrls added.
+    for (let i = 0; i < results.length; i++) {
         let place = {
             ...results[i],
             hobby: hobby,
-            distance: distanceMi,
+            distance: null,
+            website: null,
         };
-
-        // For each field in details, add that field to place.
-        for (const [key, value] of Object.entries(details)) {
-            place[key] = value;
-        }
-
         places.push(place);
-        i ++;
     }
-    console.log(`Got ${places.length} places for hobby: ${hobby}`)
+    console.log(`${hobby}: Got ${places.length} places for hobby: ${hobby}`)
     return places;
+}
+
+// This function modifies the places array that has already been displayed in the user's feed.
+// It adds distance in miles, photo urls, and the website link to each place object.
+async function getDistanceAndDetails(places) {
+    console.log("Getting distance and details");
+    const originLocation = dummyAccountStore.useCurrentLocation ? await getLocation() : dummyAccountStore.homeLocation.coordinates;
+    const promises = Array.from({ length: places.length }, async (_, i) => {
+        const destinationLocation = places[i].geometry.location;
+        const placeId = places[i].place_id;
+        // The text search API call only gets a limited set of details so we call Place Details API for a full set.
+        // We also get the distance from the user's location to the place.
+        // Run getDistance and getDetails in parallel.
+        const [distance, details] = await Promise.all([
+            getDistance(originLocation, destinationLocation),
+            getDetails(placeId)
+        ]);
+        // Convert distance from meters to miles and round to the nearest 100th.
+        let distanceMi = Math.round(distance * 0.000621371192 * 100) / 100;
+        // Modify the place object in places to include distance and details.
+        places[i].distance = distanceMi;
+        for (const [key, value] of Object.entries(details)) {
+            places[i][key] = value;
+        }
+    });
+    // Wait for all promises to resolve.
+    await Promise.all(promises);
 }
 
 async function getDistance(origin, destination) {
@@ -95,17 +100,16 @@ async function getDistance(origin, destination) {
     return distance;
 }
 
-// This function calls the Place Details API to get the fields website, vicinity, and photos.
+// This function calls the Place Details API to get the website and photo_reference for each place.
 // The function also calls getPhotoUrl to get the URL for each photo.
 async function getDetails(placeId) {
     const URL = 'https://maps.googleapis.com/maps/api/place/details/json' +
         `?place_id=${placeId}` +
-        `&fields=photos,website,vicinity` +
+        `&fields=photos,website` +
         `&key=${API_KEY}`;
     let response = await fetch(URL);
     let json = await response.json();
-    // Create an object with website, vicinity, and photoUrls.
-    // If any of these fields are missing, omit them from the object.
+    // Create an object with website and photoUrls, checking if each field exists first.
     let details = {};
     if (json.result.photos) {
         let photoUrls = [];
@@ -117,12 +121,10 @@ async function getDetails(placeId) {
     if (json.result.website) {
         details.website = json.result.website;
     }
-    if (json.result.vicinity) {
-        details.vicinity = json.result.vicinity;
-    }
     return details;
 }
 
+// This function gets a url for a photo using the photo_reference passed to it.
 async function getPhotoUrl(photoRef) {
     const URL = "https://maps.googleapis.com/maps/api/place/photo" +
         `?photo_reference=${photoRef}` +
@@ -133,7 +135,7 @@ async function getPhotoUrl(photoRef) {
 }
 
 // *** TODO: try FieldMask: '*' ***
-// // This feature is in preview and may have limited support. Backup is getTextSearchOld.
+// // This feature is in preview and may have limited support. Backup is getTextSearch.
 // // For some reason this is not returning photos so we will use the old version for now.
 // async function getTextSearchNew() { 
 //     let location = await getLocation();
@@ -163,4 +165,4 @@ async function getPhotoUrl(photoRef) {
 //     }
 // }
 
-export { getPlaces }
+export { getPlaces, getDistanceAndDetails }
