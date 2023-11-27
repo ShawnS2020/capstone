@@ -1,14 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, TextInput, Text, View, Platform, Image} from 'react-native';
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from '../firebase';
+import { TouchableOpacity, StyleSheet, TextInput, Text, View, Platform, Image } from 'react-native';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
 
-const LoginScreen = ( {navigation} ) => {
+export default function LoginScreen({ navigation }) {
 
+    const auth = getAuth();
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
-    const auth = getAuth();
-    const inputContWidth = Platform.OS === 'web' ? '25%' : '60%';
-    const buttonContWidth = Platform.OS === 'web' ? '15%' : '40%';
+
 
     const handleRegistration = () => {
         createUserWithEmailAndPassword(auth, email, password)   // auth is given by device, used by firebase
@@ -21,12 +20,11 @@ const LoginScreen = ( {navigation} ) => {
     const handleLogin = (e) =>{
         e.preventDefault();
         signInWithEmailAndPassword(auth, email, password)       
-        .then((userCredential) =>                               // textfield to allow input for email & password to login
-        {
+        .then((userCredential) => {                 
             console.log(userCredential.user.email, "is logged in");
-            if (userCredential)
+            if (userCredential)                     // if user successfully logs
             {
-                navigation.navigate("Forum")     // navgiate to "ForumScreen" route from App.js . Navigate somewhere else instead?
+                navigation.navigate("Forum")        // navgiate to "ForumScreen" route from App.js . Navigate somewhere else instead?
             }                                   
         }).catch(error => alert(error.message));
     }
@@ -34,36 +32,37 @@ const LoginScreen = ( {navigation} ) => {
     return(     // return UI where handleRegistration and handleLogin will be used
         
                 <View style={ styles.container }>
-
-                <View style = {styles.headerContainer}>
+                
+                <Image source={{uri: 'https://i.imgur.com/lL1nZ82.png'}}
+               style={{width: 200, height: 200}} />
+                <View style = {styles.headerCont}>
                     <Text style = {styles.headerText}>
                         Hobbyism
                     </Text>
-                    <Image source={{uri: 'https://i.imgur.com/lL1nZ82.png'}}
-               style={{width: 100, height: 100}} />
+                    
                 </View>
-                <View style = {[styles.inputContainer, {width: inputContWidth}]}>
+                <View style = {styles.inputWidth}>
                     <TextInput
                         placeholder = "email"
                         placeholderTextColor = "white"
                         value = {email}
-                        onChangeText ={text => setEmail(text)}
-                        style={styles.input}
+                        onChangeText = {text => setEmail(text)}
+                        style = {styles.input}
                     />
                     <TextInput
                         placeholder = "password"
                         placeholderTextColor = "white"
                         value = {password}
-                        onChangeText ={text => setPassword(text)}
-                        style={styles.input}
+                        onChangeText = {text => setPassword(text)}
+                        style = {styles.input}
                         secureTextEntry
                     />           
                 </View>
         
-                <View style={[styles.buttonContainer, {width: buttonContWidth}]}>
+                <View style={styles.buttonCont}>
                     <TouchableOpacity
-                    onPress={handleLogin}
-                    style={styles.button}
+                    onPress = {handleLogin}
+                    style = {styles.button}
                     >
                         <Text style = {styles.buttonText}> Log in  </Text>
                     </TouchableOpacity>
@@ -80,71 +79,60 @@ const LoginScreen = ( {navigation} ) => {
               </View>
     )
 }
-export default LoginScreen
 
 const styles = StyleSheet.create({
     container: {
+        alignItems: 'center',
         flex: 1,
         backgroundColor: 'white',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-        
-    inputContainer: {
-        width: '60%',
-    
-    },
-    headerContainer: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
-    },
+        paddingVertical: 15,
+    }, 
     input: {
-        backgroundColor: 'rgba(183, 13, 1, .5)',
+        backgroundColor: 'rgba(190, 20, 1, .5)',
         color: 'white',
         fontWeight: '100',
-        paddingHorizontal: 20,
         paddingVertical: 15,
+        paddingHorizontal: 20,
         borderRadius: 5,
         marginTop: 10,
-    
     },
-    buttonContainer: {
+    inputWidth: {
+        width: '70%',
+    },
+    headerCont: {
+        alignItems: 'center',
+        flexDirection: 'row', 
+    },
+    headerText:{
+        fontSize: 60,
+        color: 'rgba(180, 10, 1, .8)',
+        fontWeight: '100',
+    },
+    buttonCont: {
+        alignItems: 'center',
         width: '40%',
         justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20,
-    
+        marginTop: 10,
     },
     button: {
+        alignItems: 'center',
         width: '100%',
         height: 50,
-        alignItems: 'center',
-        backgroundColor: 'rgba(183, 13, 1, .7)',
-        paddingHorizontal: 10,
-        paddingVertical: 10,
+        backgroundColor: 'rgba(180, 10, 1, .8)',
+        paddingVertical: 12,
+        paddingHorizontal: 12,
         borderRadius: 5,
         marginTop: 5,
-    
     },
     buttonText: {
         color: 'white',
         fontWeight: '900',
-    
     },
     buttonOutline: {
         backgroundColor: 'transparent'
-        
-    
     },
     buttonOutlineText: {
         color: 'white',
         fontWeight: '900',
-    
-    
-    },
-    headerText:{
-        fontSize: 64,
-        color: 'rgba(183, 13, 1, .7)',
-        fontWeight: '100',
     }
     })

@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { inject } from 'mobx-react';
 import { Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons';
 import NavTabsHeader from '../components/NavTabsHeader.js';
-import ForumHubScreen from './ForumHubScreen.js';
 import PlacesScreen from './PlacesScreen.js';
+import ForumScreen from './ForumScreen.js';
+import LoginScreen from './LoginScreen.js';
 import AccountScreen from './AccountScreen.js';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
@@ -35,7 +36,7 @@ export default inject('dummyAccountStore')(NavTabs = ({ route }) => {
         >
             <Tab.Screen
                 name = "Forum Hub"
-                component={ForumHubScreen}
+                component={LoginScreen}
                 options={{
                     title: "Forums",
                     tabBarIcon: ({ color, size }) => (

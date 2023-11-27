@@ -1,49 +1,36 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
 import { getAuth, db,  addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query } from '../firebase';
-// import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
-
 
 export default function ForumScreen({ navigation }) {
 
-    const auth = getAuth();
-    const userID = auth.currentUser.uid;
-    const [texts, setTexts] = React.useState([]);
+    const auth = getAuth();    
     const [text, onChangeText] = React.useState('');
-    // const [loading, setLoading] = React.useState(true);
-    // const fbRef = doc(collection(db, 'test')); //need to fix to reference firestore collections
+    // const [loading, setLoading] = React.useState(true);      for displaying documents from firestore
     const flatListRef = useRef(null);
 
     const dbWrite = async () => {
         const docPush = addDoc(collection(db, 'test'), {title: text, done: false});
         console.log("Testing complete", docPush)
-
+        updateDocs();
     }
 
-    const printCol = () => {
-        const testCollection = collection(db, "test");     // create a reference for the collection 'test' in firestore
-        const results = [];
-        getDocs(testCollection).then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                console.log("Document ID: ", doc.id);
-                const data = doc.data();    // doc.data() is an object for all data in a document
-                console.log(doc.data().title);  // doc.data().title  gives the data for 'title' field for a document
-                results.push(data, doc.data().title);
-            });
-        }).catch((error) => {
-            console.error("Error getting docs: ", error);
+    const testCollection = collection(db, "test");     // create a reference for the collection 'test' in firestore
+    const results = [];
+
+    function updateDocs(){
+    getDocs(testCollection).then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            //console.log("Document ID: ", doc.id);
+            const data = doc.data();    // doc.data() is an object for all data in a document
+            results.push(data.title + " ");
         });
-                // to show the data on the UI: can create any list/array object, and within the forEach loop above 
-                // can append the data to the list (seen in results.push(data, doc.data().title));)
-                // then can return the list from a function, can't do it from a const 
-    }
+    }).catch((error) => {
+        console.error("Error getting docs: ", error);
+    });}
 
-    function handleClickSend() {
-        addTxt();
-        setTexts([...texts, text]);
-        console.log(text);
-    }
-
+    updateDocs();
+    
     function handleContentSizeChange() {
         flatListRef.current.scrollToEnd();
     }
@@ -54,19 +41,19 @@ export default function ForumScreen({ navigation }) {
                 ref = { flatListRef }
                 style = {{ flex: 1, backgroundColor: "#C0C0C0" }}
                 contentContainerStyle={ styles.body }
-                data={texts}
-                // data={ txt }
+                data={ results }
                 renderItem={ ({ item }) => (
-                    <Text style={ styles.bodyText }>{ item }</Text>
+                    <Text style={ styles.bodyText }>{ results }</Text>
                 )}
                 onContentSizeChange={handleContentSizeChange}
             />
-            <View style={ styles.bottomBar }>
-            <Button
-                    onPress={printCol}  // this button returns data to the console as of now
-                    title="Show Collection"
-                    type="submit"
+            <View>
+                <Button
+                    onPress={() => navigation.navigate('Subforum', { passedVar : 'Sports' })}
+                    title="Sports subforum"
                 />
+            </View>
+            <View style={ styles.bottomBar }>
                 <TextInput
                     style={ styles.textBar }
                     placeholder='Enter text'
@@ -86,10 +73,10 @@ export default function ForumScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     body: {
-        color: "#FFFFFF",
+        color: 'white',
         alignItems: 'flex-end',
         justifyContent: 'flex-end'
     },
