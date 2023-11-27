@@ -11,13 +11,13 @@ export default function SubforumScreen({ navigation }) {
     }
 
     return (        
-        <View style={ styles.container }>
-            <View style = {styles.subforumCont}>
-                <Text style = {styles.subforumText}>
+        <View style={ styles.body }>
+            <View style = { styles.subforumList }>
+                <Text style = { styles.subforumText }>
                      { passedVar } Subforum
                 </Text>
             </View>
-            <Button
+            <Button style = { styles.button }
                 onPress={() => handleClickThread('Example Thread')}
                 title = "Example Thread"
             />
@@ -30,39 +30,31 @@ export default function SubforumScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    body: {
         alignItems: 'center',
         flex: 1,
         backgroundColor: 'white',
-        paddingVertical: 20,
+        paddingVertical: 20
     },
-    subforumCont: {
-        alignItems: 'center',
-        flexDirection: 'row', 
+    subforumList: {
+        alignItems: 'center'
     },
     subforumText:{
         fontSize: 40,
-        color: 'rgba(180, 10, 1, .8)',
-        fontWeight: '100',
-    },
-    buttonCont: {
-        alignItems: 'center',
-        width: '40%',
-        justifyContent: 'center',
-        marginTop: 20,
+        color: 'rgba(185, 15, 5, 1)'
     },
     button: {
         alignItems: 'center',
         width: '100%',
         height: 50,
-        backgroundColor: 'rgba(180, 10, 1, .8)',
+        backgroundColor: 'rgba(180, 10, 30)',
         paddingVertical: 12,
         paddingHorizontal: 12,
         borderRadius: 5,
-        marginTop: 5,
+        marginTop: 5
     },
-    buttonText: {
-        color: 'white',
-        fontWeight: '900',
+    buttonContent: {
+        color: 'gold',
+        fontWeight: '900'
     }
 });

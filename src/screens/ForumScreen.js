@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, FlatList } from 'react-native';
-import { getAuth, db,  addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query } from '../firebase';
+import { getAuth, db,  addDoc, getDocs, collection } from '../firebase';
 
 export default function ForumScreen({ navigation }) {
 
@@ -25,8 +25,8 @@ export default function ForumScreen({ navigation }) {
             const data = doc.data();    // doc.data() is an object for all data in a document
             results.push(data.title + " ");
         });
-    }).catch((error) => {
-        console.error("Error getting docs: ", error);
+    }).catch((e) => {
+        console.e("Error getting docs: ", e);
     });}
 
     updateDocs();
@@ -36,7 +36,7 @@ export default function ForumScreen({ navigation }) {
     }
 
     return(
-        <View style={ styles.container }>
+        <View style={ styles.bodyContainer }>
             <FlatList
                 ref = { flatListRef }
                 style = {{ flex: 1, backgroundColor: "#C0C0C0" }}
@@ -58,12 +58,11 @@ export default function ForumScreen({ navigation }) {
                     style={ styles.textBar }
                     placeholder='Enter text'
                     onChangeText={onChangeText}
-                    //onChangeText={(text) => setTxt(txt)}
-                    value={text}
+                    value={ text }
                     name="textInput"
                 />
                 <Button
-                    onPress={ () => dbWrite()} 
+                    onPress={ () => dbWrite() } 
                     title="Send"
                 />
             </View>
@@ -72,7 +71,7 @@ export default function ForumScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    bodyContainer: {
         flex: 1,
     },
     body: {

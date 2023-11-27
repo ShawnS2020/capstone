@@ -1,80 +1,73 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, TextInput, Text, View, Platform, Image, ScrollView } from 'react-native';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
 import { useGlobal } from '../state/GlobalContext';
+import { StyleSheet, TextInput, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
+
 
 export default function LoginScreen({ navigation }) {
 
-    const auth = getAuth();
-    const [email, setEmail] = React.useState('');
+    const userAuth = getAuth();
+    const [email, setEmail] = React.useState('');       // email and PW should use different states from React
     const [password, setPassword] = React.useState('');
     const { login } = useGlobal();
 
-
-    const handleRegistration = () => {
-        createUserWithEmailAndPassword(auth, email, password)   // auth is given by device, used by firebase
-        .then(userCredential => {                               // 'const userID = auth.currentUser.uid;' can be used in homescreen
-            console.log(userCredential.user.email, "is registered");    // ^ to set user ID within firebase to be same as auth ID
-        })
-        .catch(error => alert(error.message))
-    }
-
-    const handleLogin = (e) =>{
+    function register(e){      // userCredential from Firebase documentation
         e.preventDefault();
-        signInWithEmailAndPassword(auth, email, password)       
-        .then((userCredential) => {                 
-            console.log(userCredential.user.email, "is logged in");
+        createUserWithEmailAndPassword(userAuth, email, password)   // auth is given by device, used by firebase    
+        .then(userCredential => {                               // 'const userID = auth.currentUser.uid;' can be used in homescreen
+            console.log("User account created:", userCredential.user.email);    // ^ to set user ID within firebase to be same as auth ID
+            signInWithEmailAndPassword(userAuth, email, password);
             login();
-            if (userCredential)                     // if user successfully logs
-            {
-                // navigation.navigate("Forum")        // navgiate to "ForumScreen" route from App.js . Navigate somewhere else instead?
-                navigation.navigate("Nav Tabs");
-            }                                   
-        }).catch(error => alert(error.message));
+        }).catch(e => alert(e.message))   // throws error from Firebase documentation
     }
 
-    return (     // return UI where handleRegistration and handleLogin will be used
+    function signIn(e){
+        e.preventDefault();
+        signInWithEmailAndPassword(userAuth, email, password)       
+        .then((userCredential) => {                 
+            console.log("User signed in:", userCredential.user.email);
+                login();
+            if(login) navigation.navigate("Nav Tabs");                    // if user successfully logs{}                                  
+        }).catch(e => alert(e.message));
+    }
+
+    return (     
         <ScrollView>
-            <View style={ styles.container }>
-                <Image source={{uri: 'https://i.imgur.com/lL1nZ82.png'}} style={{width: 200, height: 200}} />
-                <View style = {styles.headerCont}>
-                    <Text style = {styles.headerText}>Hobbyist </Text>
+            <View style={ styles.body }>
+                <Image source={ {uri: 'https://i.imgur.com/lL1nZ82.png'} } style={ styles.imageStyle } />
+                <View style = { styles.titleCont }>
+                    <Text style = { styles.titleText }>Hobbyist</Text>
                 </View>
-                <View style = {styles.inputWidth}>
-                    <TextInput
-                        placeholder = "email"
+                <View style = { styles.inputWidth }>
+                    <TextInput style = { styles.textInputField }
+                        placeholder = "Enter Email"
                         placeholderTextColor = "white"
-                        value = {email}
-                        onChangeText = {text => setEmail(text)}
-                        style = {styles.input}
+                        value = { email }
+                        onChangeText = { text => setEmail(text) }
                     />
-                    <TextInput
-                        placeholder = "password"
+                    <TextInput style = { styles.textInputField }
+                        value = { password }
+                        secureTextEntry     // allows security features for mobile devices
+                        placeholder = "Enter Password"
                         placeholderTextColor = "white"
-                        value = {password}
-                        onChangeText = {text => setPassword(text)}
-                        style = {styles.input}
-                        secureTextEntry
+                        onChangeText = { text => setPassword(text) }
                     />           
                 </View>
-                <View style={styles.buttonCont}>
-                    <TouchableOpacity
-                        onPress = {handleLogin}
-                        style = {styles.button}
+                <View style={ styles.buttonList }>
+                    <TouchableOpacity style = { styles.button }
+                        onPress = { signIn }
                     >
-                        <Text style = {styles.buttonText}> Log in  </Text>
+                        <Text style = { styles.buttonContent }> Log in  </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={handleRegistration}
-                        style={[styles.button]}
+                    <TouchableOpacity style={ styles.button }
+                        onPress={ register }
                     >
-                        <Text style = {styles.buttonOutlineText}> Create User </Text>
+                        <Text style = { styles.buttonContent }> Register </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={login}
-                        style={[styles.button]}
+                    <TouchableOpacity style={ styles.button }
+                        onPress={ login }
                     >
-                        <Text>Bypass</Text>
+                        <Text style = { styles.buttonContent }> Bypass (Guest) </Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -83,58 +76,51 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    body: {
         alignItems: 'center',
-        flex: 1,
-        backgroundColor: 'white',
-        paddingVertical: 15,
+        height: '150%',
+        backgroundColor: '#FFFFFF',
+        paddingVertical: 15
     }, 
-    input: {
-        backgroundColor: 'rgba(190, 20, 1, .5)',
-        color: 'white',
+    imageStyle: {
+        width: 200, 
+        height: 200
+    },
+    textInputField: {
+        backgroundColor: 'rgba(190, 30, 1, .5)',
         fontWeight: '100',
+        marginTop: 10,
         paddingVertical: 15,
         paddingHorizontal: 20,
-        borderRadius: 5,
-        marginTop: 10,
+        borderRadius: 15
     },
     inputWidth: {
-        width: '70%',
+        width: '75%'
     },
-    headerCont: {
+    titleCont: {
         alignItems: 'center',
-        flexDirection: 'row', 
+        flexDirection: 'row' 
     },
-    headerText:{
+    titleText:{
         fontSize: 60,
-        color: 'rgba(180, 10, 1, .8)',
-        fontWeight: '100',
-    },
-    buttonCont: {
-        alignItems: 'center',
-        width: '40%',
-        justifyContent: 'center',
-        marginTop: 10,
+        color: 'rgba(185, 15, 5, 1)'
     },
     button: {
         alignItems: 'center',
-        width: '100%',
+        width: '75%',
         height: 40,
-        backgroundColor: 'rgba(180, 10, 1, .8)',
+        backgroundColor: 'rgba(180, 10, 10, .8)',
         paddingVertical: 12,
-        paddingHorizontal: 12,
         borderRadius: 5,
-        marginTop: 5,
+        marginTop: 5
     },
-    buttonText: {
-        color: 'white',
-        fontWeight: '900',
+    buttonList: {
+        alignItems: 'center',
+        width: '40%',
+        justifyContent: 'center',
+        marginTop: 20
     },
-    buttonOutline: {
-        backgroundColor: 'transparent'
+    buttonContent: {
+        color: 'gold'
     },
-    buttonOutlineText: {
-        color: 'white',
-        fontWeight: '900',
-    }
     })

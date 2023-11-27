@@ -17,27 +17,27 @@ export default function ThreadScreen() {
     }
 
     return (     
-        <View style={ styles.container }>
+        <View style={ styles.body }>
             <FlatList
-                ref = {flatListRef}
-                style = {{ flex: 1, backgroundColor: "#C0C0C0" }}
+                ref = { flatListRef }
+                style = { { flex: 1, backgroundColor: "#C0C0C0" } }
                 contentContainerStyle={styles.chatContainer}
                 data={results}
                 renderItem={ ({ item }) => (
-                    <Text style={styles.chat}>{item}</Text>
+                    <Text style={ styles.chat }>{item}</Text>
                 )}
-                onContentSizeChange={handleContentSizeChange}
+                onContentSizeChange={ handleContentSizeChange }
             />
             <View style={ styles.bottomBar }>
                 <TextInput
                     style={ styles.textBar }
                     placeholder='Enter text'
-                    onChangeText={(text) => {onChangeText(text); flatListRef.current.scrollToEnd()}}
-                    value={text}
+                    onChangeText={(text) => { onChangeText(text); flatListRef.current.scrollToEnd()} }
+                    value={ text }
                     name="textInput"
                 />
                 <Button
-                    onPress={ () => dbWrite()} 
+                    onPress={ () => dbWrite() } 
                     title="Send"
                 />
             </View>
@@ -45,28 +45,9 @@ export default function ThreadScreen() {
     )
 }
 const styles = StyleSheet.create({
-    container: {
+    body: {
         flex: 1,
         backgroundColor: 'white',
-    },
-    commentStyle: {
-        fontSize: 20,
-        backgroundColor: 'rgba(183, 13, 1, .5)',
-        color: 'white',
-        fontWeight: '100',
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        marginTop: 10,
-    }, 
-    threadCont: {
-        alignItems: 'center',
-        flexDirection: 'row', 
-    },
-    threadText:{
-        fontSize: 20,
-        color: 'rgba(180, 10, 1, .8)',
-        fontWeight: 'bold',
     },
     chatContainer: {
         alignItems: 'flex-end',
