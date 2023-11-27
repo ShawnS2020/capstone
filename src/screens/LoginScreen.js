@@ -41,7 +41,7 @@ export default function LoginScreen({ navigation }) {
                style={{width: 200, height: 200}} />
                 <View style = {styles.headerCont}>
                     <Text style = {styles.headerText}>
-                        Hobbyism
+                        Hobbyist
                     </Text>
                     
                 </View>
@@ -65,16 +65,17 @@ export default function LoginScreen({ navigation }) {
         
                 <View style={styles.buttonCont}>
                     <View style={{flexDirection: 'row'}}>
+                    <TouchableOpacity
+                            onPress={login}
+                            style = {styles.button}
+                        >
+                            <Text style = {styles.buttonText}>Bypass</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity
                             onPress = {handleLogin}
                             style = {styles.button}
                         >
                             <Text style = {styles.buttonText}> Log in  </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={login}
-                        >
-                            <Text>Bypass</Text>
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity
