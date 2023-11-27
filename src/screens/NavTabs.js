@@ -1,22 +1,17 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useState } from 'react';
-import { inject } from 'mobx-react';
 import { Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons';
-import NavTabsHeader from '../components/NavTabsHeader.js';
-import PlacesScreen from './PlacesScreen.js';
-import LoginScreen from './LoginScreen.js';
-import AccountScreen from './AccountScreen.js';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import ForumHubScreen from './ForumHubScreen.js';
+import NavTabsHeader from '../components/NavTabsHeader.js';
+import ForumStack from './ForumStack.js';
+import PlacesScreen from './PlacesScreen.js';
+import AccountScreen from './AccountScreen.js';
 
 const Tab = createBottomTabNavigator();
 
 export default function NavTabs({ route }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     let routeTitle = getFocusedRouteNameFromRoute(route) ?? 'Places';
-    if (routeTitle === 'Forum Hub') {
-        routeTitle = 'Forums';
-    }
 
     function handleClickMenu() {
         setIsMenuOpen(!isMenuOpen);
@@ -35,15 +30,13 @@ export default function NavTabs({ route }) {
             }}
         >
             <Tab.Screen
-                name = "Forum Hub"
-                component={ForumHubScreen}
-                // component={LoginScreen}
+                name = "Forum Stack"
+                component={ForumStack}
                 options={{
-                    title: "Forums",
+                    headerShown: false,
                     tabBarIcon: ({ color, size }) => (
                         <Entypo name="chat" color={color} size={size} />
                     ),
-
                 }}
             />
             <Tab.Screen

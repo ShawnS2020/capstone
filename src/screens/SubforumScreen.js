@@ -1,30 +1,31 @@
-import React from 'react';
-import {  TouchableOpacity, StyleSheet, Button, TextInput, Text, View, Image } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useGlobal } from '../state/GlobalContext';
+import { StyleSheet, Button, Text, View } from 'react-native';
 
 export default function SubforumScreen({ navigation }) {
+    const { subforumTitle, setThreadTitle } = useGlobal();
+    const passedVar = subforumTitle;
 
-    const route = useRoute();   
-    const passedVar = route.params?.passedVar;      // variable is passed to SubforumScreen from ForumScreen
-                                                    // this variable will be used to load a specific subforum document
-    return(        
-                <View style={ styles.container }>
+    function handleClickThread(threadTitle) {
+        setThreadTitle(threadTitle);
+        navigation.navigate('Thread');
+    }
 
-                <View style = {styles.subforumCont}>
-                    <Text style = {styles.subforumText}>
-                         { passedVar } Subforum
-                    </Text>
-                </View>
-                <Button
-                    onPress={() => navigation.navigate('Thread', { passedVar : 'Example Thread DocID' })} // get docID by ref 
-                    title = "Example Thread"
-                />
-                <Button
-                    onPress={() => navigation.navigate('Thread', { passedVar : 'Example Thread DocID' })} // get docID by ref 
-                    title = "Another Example Thread"
-                />
-        
-              </View>
+    return (        
+        <View style={ styles.container }>
+            <View style = {styles.subforumCont}>
+                <Text style = {styles.subforumText}>
+                     { passedVar } Subforum
+                </Text>
+            </View>
+            <Button
+                onPress={() => handleClickThread('Example Thread')}
+                title = "Example Thread"
+            />
+            <Button
+                onPress={() => handleClickThread('Another Example Thread')}
+                title = "Another Example Thread"
+            />
+      </View>
     )
 }
 
@@ -63,5 +64,5 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontWeight: '900',
-    },
-    })
+    }
+});

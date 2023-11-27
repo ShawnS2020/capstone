@@ -1,10 +1,10 @@
 import { View } from 'react-native';
-import { useAuth } from '../state/AuthContext';
+import { useGlobal } from '../state/GlobalContext';
 import ForumHubLoggedIn from '../components/ForumHubLoggedIn';
 import LoginScreen from './LoginScreen';
 
 export default function ForumHubScreen({ navigation }) {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn } = useGlobal();
 
     return (
         <View style={{flex:1}}>

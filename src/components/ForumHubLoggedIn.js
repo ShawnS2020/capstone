@@ -1,18 +1,23 @@
 import { Button, View } from 'react-native';
-import { useAuth } from '../state/AuthContext';
+import { useGlobal } from '../state/GlobalContext';
 
 export default function ForumHubLoggedIn({ navigation }) {
-    const { logout } = useAuth();
+    const { logout, setSubforumTitle } = useGlobal();
+
+    function handleClickSubforum(subforumTitle) {
+        setSubforumTitle(subforumTitle);
+        navigation.navigate('Subforum');
+    }
 
     return (
         <View style={{flex:1}}>
             <View style={{flex:1}}>
             <Button
-                onPress={() => navigation.navigate('Subforum', { passedVar : 'Sports' })}
+                onPress={() => handleClickSubforum('Sports')}
                 title="Sports subforum"
             />
             <Button
-                onPress={() => navigation.navigate('Subforum', { passedVar : 'Music' })}
+                onPress={() => handleClickSubforum('Music')}
                 title="Music subforum"
             />
             </View>

@@ -1,14 +1,14 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, TextInput, Text, View, Platform, Image, ScrollView } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
-import { useAuth } from '../state/AuthContext';
+import { useGlobal } from '../state/GlobalContext';
 
 export default function LoginScreen({ navigation }) {
 
     const auth = getAuth();
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
-    const { login } = useAuth();
+    const { login } = useGlobal();
 
 
     const handleRegistration = () => {
