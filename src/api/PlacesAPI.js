@@ -1,4 +1,4 @@
-import { API_KEY } from "@env";
+import { IOS_KEY } from "@env";
 import getLocation from "./ExpoLocation";
 import dummyAccountStore from "../state/DummyAccountStore";
 
@@ -30,7 +30,7 @@ async function getTextSearch(originLocation, hobby) {
     const URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json' +
         `?query=${hobby}` +
         `&location=${originLocation[0]},${originLocation[1]}` +
-        `&key=${API_KEY}`;
+        `&key=${IOS_KEY}`;
     let response = await fetch(URL);
     let json = await response.json();
     if (json.status != "OK") {
@@ -87,7 +87,7 @@ async function getDistance(origin, destination) {
         headers: {
             'Content-Type': 'application/json',
             'X-Goog-FieldMask': 'routes.distanceMeters',
-            'X-Goog-Api-Key': API_KEY
+            'X-Goog-Api-Key': IOS_KEY
         },
         body: JSON.stringify({
             origin: { location: { latLng: { latitude: origin[0], longitude: origin[1] }}},
@@ -106,7 +106,7 @@ async function getDetails(placeId) {
     const URL = 'https://maps.googleapis.com/maps/api/place/details/json' +
         `?place_id=${placeId}` +
         `&fields=photos,website` +
-        `&key=${API_KEY}`;
+        `&key=${IOS_KEY}`;
     let response = await fetch(URL);
     let json = await response.json();
     // Create an object with website and photoUrls, checking if each field exists first.
@@ -129,7 +129,7 @@ async function getPhotoUrl(photoRef) {
     const URL = "https://maps.googleapis.com/maps/api/place/photo" +
         `?photo_reference=${photoRef}` +
         "&maxwidth=1600" +
-        `&key=${API_KEY}`;
+        `&key=${IOS_KEY}`;
     let response = await fetch(URL);
     return response.url;
 }
@@ -145,7 +145,7 @@ async function getPhotoUrl(photoRef) {
 //         headers: {
 //             'Content-Type': 'application/json',
 //             'X-Goog-FieldMask': 'places.displayName,places.photos,places.id',
-//             'X-Goog-Api-Key': API_KEY
+//             'X-Goog-Api-Key': IOS_KEY
 //         },
 //         body: JSON.stringify({
 //             textQuery: 'skate park',
