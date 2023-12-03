@@ -1,7 +1,8 @@
 import React from 'react';
 import { useGlobal } from '../state/GlobalContext';
-import { StyleSheet, TextInput, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, Text, View, Image, ScrollView, TouchableOpacity, Button } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
+import SetupScreen from './SetupScreen';
 
 
 export default function LoginScreen({ navigation }) {
@@ -68,7 +69,15 @@ export default function LoginScreen({ navigation }) {
                         onPress={ login }
                     >
                         <Text style = { styles.buttonContent }> Bypass (Guest) </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> 
+                     {/* add test for setup screen                    */}
+                     <TouchableOpacity style={ styles.button }
+                         //onPress={SetupScreen}
+                         onPress={() => navigation.navigate(SetupScreen)}
+                    >
+                        <Text style = { styles.buttonContent }> SetupScreen </Text>
+                    </TouchableOpacity> 
+
                 </View>
             </View>
         </ScrollView>
