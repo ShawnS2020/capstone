@@ -8,9 +8,7 @@ export default function ForumHubScreen({ navigation }) {
 
     return (
         <View style={{flex:1}}>
-            {/* { isLoggedIn ? <ForumHubLoggedIn navigation={navigation} /> : <ForumHubLoggedOut navigation={navigation} /> } */}
             { isLoggedIn ? <ForumHubLoggedIn navigation={navigation} /> : <LoginScreen navigation={navigation} /> }
-            {/* <LoginScreen navigation={navigation}/> */}
         </View>
     );
 }

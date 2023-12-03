@@ -16,7 +16,7 @@ export default function NavStack() {
     const [initialRouteName, setInitialRouteName] = useState('Login');
 
     return (
-        <Stack.Navigator initialRouteName={"Login"}>
+        <Stack.Navigator>
             <Stack.Screen
                 name="Login"
                 component={LoginScreen}

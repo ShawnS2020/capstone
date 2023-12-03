@@ -5,8 +5,7 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } f
 import SetUpScreen1 from './SetUpScreen2';
 
 
-export default function LoginScreen({ navigation }) {
-
+export default function LoginScreen({ route, navigation }) {
     const userAuth = getAuth();
     const [email, setEmail] = React.useState('');       // email and PW should use different states from React
     const [password, setPassword] = React.useState('');
@@ -72,19 +71,19 @@ export default function LoginScreen({ navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={ styles.button }
                         onPress={ () => {
-                            login()
+                            if (!route) login()
                             navigation.navigate("Nav Tabs");
                         } }
                     >
-                        <Text style = { styles.buttonContent }> Bypass (Guest) </Text>
+                        <Text style = { styles.buttonContent }>{route ? "Skip" : "Bypass (Test)"}</Text>
                     </TouchableOpacity> 
-                     {/* add test for setup screen                    */}
+                    {!route ? null :
                      <TouchableOpacity style={ styles.button }
                          onPress={() => navigation.navigate("Set Up 1")}
                     >
                         <Text style = { styles.buttonContent }>Set Up Steps</Text>
                     </TouchableOpacity> 
-
+                    }
                 </View>
             </View>
         </ScrollView>
