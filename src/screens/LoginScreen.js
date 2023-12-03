@@ -2,8 +2,6 @@ import React from 'react';
 import { useGlobal } from '../state/GlobalContext';
 import { StyleSheet, TextInput, Text, View, Image, ScrollView, TouchableOpacity, Button } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
-import SetUpScreen1 from './SetUpScreen2';
-
 
 export default function LoginScreen({ route, navigation }) {
     const userAuth = getAuth();
@@ -71,18 +69,20 @@ export default function LoginScreen({ route, navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={ styles.button }
                         onPress={ () => {
-                            if (!route) login()
+                            // Only log in if user in on forum screen
+                            if (route.name == "Forum Hub") login()
                             navigation.navigate("Nav Tabs");
                         } }
                     >
-                        <Text style = { styles.buttonContent }>{route ? "Skip" : "Bypass (Test)"}</Text>
+                        <Text style = { styles.buttonContent }>{route.name == "Login" ? "Skip" : "Bypass (Test)"}</Text>
                     </TouchableOpacity> 
-                    {!route ? null :
-                     <TouchableOpacity style={ styles.button }
-                         onPress={() => navigation.navigate("Set Up 1")}
-                    >
-                        <Text style = { styles.buttonContent }>Set Up Steps</Text>
-                    </TouchableOpacity> 
+                    {route.name == "Login" ?
+                        <TouchableOpacity style={ styles.button }
+                             onPress={() => navigation.navigate("Set Up 1")}
+                        >
+                            <Text style = { styles.buttonContent }>Set Up Steps</Text>
+                        </TouchableOpacity> 
+                    : null
                     }
                 </View>
             </View>

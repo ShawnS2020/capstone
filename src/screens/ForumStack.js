@@ -1,18 +1,19 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useGlobal } from '../state/GlobalContext.js';
-import ForumHubScreen from './ForumHubScreen.js';
 import SubforumScreen from './SubforumScreen.js';
+import ForumHubLoggedIn from './ForumHubScreen.js';
+import LoginScreen from './LoginScreen.js';
 
 const Stack = createNativeStackNavigator();
 
 export default function ForumStack() {
-    const { subforumTitle } = useGlobal();
+    const { isLoggedIn, subforumTitle } = useGlobal();
 
     return (
         <Stack.Navigator>
             <Stack.Screen
                 name = "Forum Hub"
-                component={ForumHubScreen}
+                component={isLoggedIn ? ForumHubLoggedIn : LoginScreen}
                 options={{ title: "Forums" }}
             />
             <Stack.Screen

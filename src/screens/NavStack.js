@@ -12,8 +12,7 @@ import PlacesScreen from './PlacesScreen.js';
 const Stack = createNativeStackNavigator();
 
 export default function NavStack() {
-    const { isLoggedIn, threadTitle } = useGlobal();
-    const [initialRouteName, setInitialRouteName] = useState('Login');
+    const { threadTitle } = useGlobal();
 
     return (
         <Stack.Navigator>
