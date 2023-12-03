@@ -38,7 +38,6 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
     }
 
     return (
-        // Add a ScrollView to wrap this View
         <ScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
             <Image 

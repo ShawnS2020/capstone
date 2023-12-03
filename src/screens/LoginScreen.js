@@ -2,7 +2,7 @@ import React from 'react';
 import { useGlobal } from '../state/GlobalContext';
 import { StyleSheet, TextInput, Text, View, Image, ScrollView, TouchableOpacity, Button } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
-import SetupScreen from './SetupScreen';
+import SetUpScreen1 from './SetUpScreen2';
 
 
 export default function LoginScreen({ navigation }) {
@@ -19,6 +19,7 @@ export default function LoginScreen({ navigation }) {
             console.log("User account created:", userCredential.user.email);    // ^ to set user ID within firebase to be same as auth ID
             signInWithEmailAndPassword(userAuth, email, password);
             login();
+            // navigation.navigate("Set Up 1");
         }).catch(e => alert(e.message))   // throws error from Firebase documentation
     }
 
@@ -27,8 +28,12 @@ export default function LoginScreen({ navigation }) {
         signInWithEmailAndPassword(userAuth, email, password)       
         .then((userCredential) => {                 
             console.log("User signed in:", userCredential.user.email);
-                login();
-            if(login) navigation.navigate("Nav Tabs");                    // if user successfully logs{}                                  
+            login();
+            /*** TODO: is this check redundant? ***/
+            if (userCredential) {
+                navigation.navigate("Nav Tabs");
+            }
+            // if(login) navigation.navigate("Nav Tabs");                    // if user successfully logs{}                                  
         }).catch(e => alert(e.message));
     }
 
@@ -66,16 +71,18 @@ export default function LoginScreen({ navigation }) {
                         <Text style = { styles.buttonContent }> Register </Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={ styles.button }
-                        onPress={ login }
+                        onPress={ () => {
+                            login()
+                            navigation.navigate("Nav Tabs");
+                        } }
                     >
                         <Text style = { styles.buttonContent }> Bypass (Guest) </Text>
                     </TouchableOpacity> 
                      {/* add test for setup screen                    */}
                      <TouchableOpacity style={ styles.button }
-                         //onPress={SetupScreen}
-                         onPress={() => navigation.navigate(SetupScreen)}
+                         onPress={() => navigation.navigate("Set Up 1")}
                     >
-                        <Text style = { styles.buttonContent }> SetupScreen </Text>
+                        <Text style = { styles.buttonContent }>Set Up Steps</Text>
                     </TouchableOpacity> 
 
                 </View>
