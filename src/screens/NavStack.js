@@ -4,10 +4,11 @@ import { useGlobal } from '../state/GlobalContext.js';
 import NavTabs from './NavTabs.js';
 import LoginScreen from './LoginScreen.js';
 import ThreadScreen from './ThreadScreen.js';
-import SetUpScreen1 from './SetUpScreen1.js';
-import SetUpScreen2 from './SetUpScreen2.js';
-import SetUpScreen3 from './SetUpScreen3.js';
+import SetupScreen1 from './SetupScreen1.js';
+import SetupScreen2 from './SetupScreen2.js';
+import SetupScreen3 from './SetupScreen3.js';
 import PlacesScreen from './PlacesScreen.js';
+import CreateThreadScreen from './CreateThreadScreen.js';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,18 +22,18 @@ export default function NavStack() {
                 component={LoginScreen}
             />
             <Stack.Screen
-                name="Set Up 1"
-                component={SetUpScreen1}
+                name="Setup 1"
+                component={SetupScreen1}
                 options={{ title: "" }}
             />
             <Stack.Screen
-                name="Set Up 2"
-                component={SetUpScreen2}
+                name="Setup 2"
+                component={SetupScreen2}
                 options={{ title: "" }}
             />
             <Stack.Screen
-                name="Set Up 3"
-                component={SetUpScreen3}
+                name="Setup 3"
+                component={SetupScreen3}
                 options={{ title: "" }}
             />
             <Stack.Screen
@@ -44,6 +45,10 @@ export default function NavStack() {
                 name="Thread"
                 component={ThreadScreen}
                 options={{ title: threadTitle }}
+            />
+            <Stack.Screen
+                name="Create Thread"
+                component={ CreateThreadScreen }
             />
             <Stack.Screen
                 name="PlacesScreen"

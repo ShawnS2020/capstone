@@ -3,7 +3,7 @@ import RoundButton from '../components/RoundButton';
 
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
-export default function SetUpScreen2({ navigation }) {
+export default function SetupScreen2({ navigation }) {
   return (
     <ImageBackground source={image}>
       {/* <ScrollView style={{backgroundColor:'rgba(255,255,255,0.9)'}} > */}

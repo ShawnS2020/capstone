@@ -1,16 +1,27 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Button, TextInput, Text, View, FlatList } from 'react-native';
+import { getAuth, db,  addDoc, getDocs, getDoc, doc, collection, Timestamp } from '../firebase';
 import { useGlobal } from '../state/GlobalContext';
+import { useRoute } from "@react-navigation/native"
 
 export default function ThreadScreen() {
     const [text, onChangeText] = useState("");
-    const { threadTitle } = useGlobal();
+    const { subforumTitle, setThreadTitle, } = useGlobal();
+    
+    const [commentData, setCommentData] = useState([]);
     const flatListRef = useRef(null);
-    const results = [`Welcome to ${threadTitle}!`, "This is a comment.", "This is another comment.", "This is a third comment."];
-    // Push 10 more strings to results array
-    for (let i = 0; i < 10; i++) {
-        results.push(`This is comment number ${i + 4}.`);
+    const route = useRoute();
+    const passedThreadID = route.params?.passedThreadID;    // taking passedThreadID from subforumScreen or CreateThreadScreen
+                                                            // used below in updateCommentDocs()
+    async function updateCommentDocs() {                                                  
+            const collectionRef = collection(db, `Subforums/${subforumTitle}/Threads/${passedThreadID}/Comments`);
+            const querySnapshot = await getDocs(collectionRef);
+            const data = querySnapshot.docs.map((doc) => doc.data().text + " ");
+                setCommentData(data);
     }
+    useEffect(() => {
+        updateCommentDocs();
+    }, []);
 
     function handleContentSizeChange() {
         flatListRef.current.scrollToEnd();
@@ -22,12 +33,20 @@ export default function ThreadScreen() {
                 ref = { flatListRef }
                 style = { { flex: 1, backgroundColor: "#C0C0C0" } }
                 contentContainerStyle={styles.chatContainer}
-                data={results}
+                data={ commentData }
                 renderItem={ ({ item }) => (
                     <Text style={ styles.chat }>{item}</Text>
                 )}
                 onContentSizeChange={ handleContentSizeChange }
             />
+            {commentData.map((element, index) => (       // loop through array of comments
+                <View
+                key={ index } // Use a unique key for each button
+                
+                >   
+                    <Text>{element}</Text>
+                </View>
+            ))}
             <View style={ styles.bottomBar }>
                 <TextInput
                     style={ styles.textBar }

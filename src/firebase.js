@@ -1,7 +1,7 @@
 import { BROWSER_KEY } from "@env";
 import { initializeApp } from 'firebase/app';
-import { getFirestore, addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query, } from 'firebase/firestore';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator, } from "firebase/auth";
 
 // Initialize Firebase
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -20,4 +20,4 @@ export const FIREBASE_APP = initializeApp(firebaseConfig);
 export const db = getFirestore(FIREBASE_APP);
 export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
 export { addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query, getAuth, 
-          createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator }
+          createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator, serverTimestamp }

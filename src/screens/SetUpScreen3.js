@@ -4,7 +4,7 @@ import RoundButton from '../components/RoundButton';
 
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
-export default function SetUpScreen3({ navigation }) {
+export default function SetupScreen3({ navigation }) {
   return (
     <ImageBackground source={image}>
       <View style={styles.container}> 
