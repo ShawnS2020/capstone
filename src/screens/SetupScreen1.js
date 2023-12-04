@@ -17,7 +17,7 @@ export default function SetupScreen1({ navigation }) {
           </View>
           <View style={styles.lower}>
             <RoundButton
-              onPress={() => navigation.navigate("Set Up 2")}
+              onPress={() => navigation.navigate("Setup 2")}
               title="Next"
             />
             <RoundButton

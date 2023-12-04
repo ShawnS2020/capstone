@@ -78,7 +78,7 @@ export default function LoginScreen({ route, navigation }) {
                     </TouchableOpacity> 
                     {route.name == "Login" ?
                         <TouchableOpacity style={ styles.button }
-                             onPress={() => navigation.navigate("Set Up 1")}
+                             onPress={() => navigation.navigate("Setup 1")}
                         >
                             <Text style = { styles.buttonContent }>Set Up Steps</Text>
                         </TouchableOpacity> 

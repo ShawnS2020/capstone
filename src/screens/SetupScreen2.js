@@ -7,9 +7,7 @@ const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icon
 
 export default inject("dummyAccountStore")(observer(({ dummyAccountStore, navigation }) => {
   const [input, setInput] = useState('');
-  const [hobbies, setHobbies] = useState([
-    "hiking", "music", "movies", "reading", "cooking", "baking", "painting", "drawing", "photography"
-  ]);
+  const [hobbies, setHobbies] = useState([]);
 
   function handleAddHobby() {
     if (input != '' && !hobbies.includes(input)) {
@@ -23,17 +21,8 @@ export default inject("dummyAccountStore")(observer(({ dummyAccountStore, naviga
   }
 
   function handleNextButtonClick() {
-//     for (let hobby of dummyAccountStore.hobbies) {
-//       dummyAccountStore.removeHobby(hobby);
-//     }
-// 
-//     for (let hobby of hobbies) {
-//       dummyAccountStore.addHobby(hobby);
-//     }
-
     dummyAccountStore.changeHobbies(hobbies);
-
-    navigation.navigate("Set Up 3");
+    navigation.navigate("Setup 3");
   }
 
   function handleSkipButtonClick() {
