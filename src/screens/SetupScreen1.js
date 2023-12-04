@@ -10,9 +10,10 @@ export default function SetupScreen1({ navigation }) {
           <View style={styles.upper}>
             <Text style={{fontSize: 20}}>Let's get you started!</Text>
             <Text style={{fontSize: 20}}>Hobbyist needs some information to find activities best suited for you.</Text>
+            <Text style={{fontSize: 20}}> {'\u25CF   Create a username'}</Text>
             <Text style={{fontSize: 20}}> {'\u25CF   Tell us your hobbies'}</Text>
+            <Text style={{fontSize: 20}}> {'\u25CF   Set your location'}</Text> 
             <Text style={{fontSize: 20}}> {'\u25CF   Join some forums'}</Text>
-            <Text style={{fontSize: 20}}> {'\u25CF   Turn on location'}</Text> 
           </View>
           <View style={styles.lower}>
             <RoundButton
@@ -20,7 +21,7 @@ export default function SetupScreen1({ navigation }) {
               title="Next"
             />
             <RoundButton
-              onPress={() => {}}
+              onPress={() => navigation.navigate("Nav Tabs")}
               title="Skip"
             />
           </View>
