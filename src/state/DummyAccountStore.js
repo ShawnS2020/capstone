@@ -23,13 +23,18 @@ class DummyAccountStore {
     }
 
     @action
+    changeHobbies(hobbies) {
+        this.hobbies = hobbies;
+    }
+
+    @action
     addHobby(hobby) {
-        this.hobbies.push(hobby);
+        this.hobbies = [...this.hobbies, hobby];
     }
 
     @action
     removeHobby(index) {
-        this.hobbies.splice(index, 1);
+        this.hobbies = this.hobbies.filter((h, i) => i != index);
     }
 
     @action

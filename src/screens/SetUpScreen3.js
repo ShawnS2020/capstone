@@ -5,6 +5,14 @@ import RoundButton from '../components/RoundButton';
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
 export default function SetUpScreen3({ navigation }) {
+  function handleNextButtonClick() {
+    navigation.navigate("Nav Tabs");
+  }
+
+  function handleSkipButtonClick() {
+    navigation.navigate("Nav Tabs");
+  }
+
   return (
     <ImageBackground source={image}>
       <View style={styles.container}> 
@@ -25,11 +33,11 @@ export default function SetUpScreen3({ navigation }) {
         </View>
         <View style={styles.lower}>
           <RoundButton
-            onPress={() => {}}
+            onPress={handleNextButtonClick}
             title="Next"
           />
           <RoundButton
-            onPress={() => {}}
+            onPress={handleSkipButtonClick}
             title="Skip"
           />
         </View>

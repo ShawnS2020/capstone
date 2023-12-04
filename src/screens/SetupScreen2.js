@@ -1,49 +1,104 @@
-import {View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
+import { useState } from 'react';
+import { observer, inject } from 'mobx-react';
+import {View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, ScrollView} from 'react-native';
 import RoundButton from '../components/RoundButton';
 
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
-export default function SetUpScreen2({ navigation }) {
+export default inject("dummyAccountStore")(observer(({ dummyAccountStore, navigation }) => {
+  const [input, setInput] = useState('');
+  const [hobbies, setHobbies] = useState([
+    "hiking", "music", "movies", "reading", "cooking", "baking", "painting", "drawing", "photography"
+  ]);
+
+  function handleAddHobby() {
+    if (input != '' && !hobbies.includes(input)) {
+      setHobbies([...hobbies, input]);
+      setInput('');
+    }
+  }
+
+  function handleDeleteHobby(hobby) {
+    setHobbies(hobbies.filter((h) => h != hobby));
+  }
+
+  function handleNextButtonClick() {
+//     for (let hobby of dummyAccountStore.hobbies) {
+//       dummyAccountStore.removeHobby(hobby);
+//     }
+// 
+//     for (let hobby of hobbies) {
+//       dummyAccountStore.addHobby(hobby);
+//     }
+
+    dummyAccountStore.changeHobbies(hobbies);
+
+    navigation.navigate("Set Up 3");
+  }
+
+  function handleSkipButtonClick() {
+    navigation.navigate("Nav Tabs");
+  }
+
   return (
     <ImageBackground source={image}>
-      {/* <ScrollView style={{backgroundColor:'rgba(255,255,255,0.9)'}} > */}
-        <View style={styles.container}> 
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
           <View style={styles.upper}>
-          <Text style={{fontSize: 20}}>{'Type some hobbies you enjoy or\n are interested in.'}</Text>
-          <View style={styles.wrapper}>
-            <TextInput
-              placeholder={'Enter your hobbies'}
-              style={styles.inputStyle}
-            />
-            <TouchableOpacity
-              onPress={() => {}}
-              style={styles.addButton}
-            >
-              <Text style={{color: '#FFF'}}>Add</Text>
-            </TouchableOpacity>
+            <Text style={{fontSize: 20}}>{'Type some hobbies you enjoy or\n are interested in.'}</Text>
+            <View style={styles.wrapper}>
+              <TextInput
+                value={input}
+                onChangeText={setInput}
+                placeholder={'Enter your hobbies'}
+                style={styles.inputStyle}
+              />
+              <TouchableOpacity
+                onPress={handleAddHobby}
+                style={styles.addButton}
+              >
+                <Text style={{color: '#FFF'}}>Add</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+          <View style={styles.hobbiesContainer}>
+            {hobbies.map((hobby, i) => {
+              return (
+                <View key={i}  style={styles.hobbyWrapper}>
+                  <Text style={styles.hobbyText}>{hobby}</Text>
+                  <TouchableOpacity
+                    onPress={() => handleDeleteHobby(hobby)}
+                    style={styles.deleteButton}
+                  >
+                    <Text style={{color: '#FFF'}}>X</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
           </View>
           <View style={styles.lower}>
             <RoundButton
-              onPress={() => navigation.navigate("Set Up 3")}
+              onPress={handleNextButtonClick}
               title="Next"
             />
             <RoundButton
-              onPress={() => {}}
+              onPress={handleSkipButtonClick}
               title="Skip"
             />
           </View> 
-        </View> 
+      </ScrollView>
     </ImageBackground>
   );
-}
+}));
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: 'rgba(255,255,255,0.9)',
     height: '100%'
+  },
+  contentContainerStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   upper: {
     alignItems: 'center',
@@ -69,8 +124,29 @@ const styles = StyleSheet.create({
   addButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: '#000',
     width: 50,
     height: 40
   },
+  hobbiesContainer: {
+    flex: 1,
+    flexWrap: 'wrap',
+    marginVertical: 8,
+  },
+  hobbyWrapper: {
+    flexDirection: 'row',
+    backgroundColor: '#FFF',
+    alignItems: 'center',
+  },
+  hobbyText: {
+    marginHorizontal: 8,
+    minWidth: '25%',
+  },
+  deleteButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000',
+    width: 32,
+    height: 32
+  }
 });
