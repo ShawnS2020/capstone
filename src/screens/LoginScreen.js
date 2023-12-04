@@ -16,7 +16,7 @@ export default function LoginScreen({ route, navigation }) {
             console.log("User account created:", userCredential.user.email);    // ^ to set user ID within firebase to be same as auth ID
             signInWithEmailAndPassword(userAuth, email, password);
             login();
-            // navigation.navigate("Set Up 1");
+            navigation.navigate("Setup 1");
         }).catch(e => alert(e.message))   // throws error from Firebase documentation
     }
 
