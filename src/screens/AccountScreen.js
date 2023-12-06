@@ -43,24 +43,39 @@
 
 import React, { useState } from 'react';
 import { observer } from 'mobx-react';
-import { View, Text, FlatList, Image, Button, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, FlatList, Image, Button, TouchableOpacity, ImageBackground, TextInput } from 'react-native';
 
 function AccountScreen({ route }) {
     const { dummyAccountStore } = route.params;
     const keyExtractor = (item, index) => index.toString();
     const [selectedHobbies, setSelectedHobbies] = useState([...dummyAccountStore.hobbies]);
+    const [newHobby, setNewHobby] = useState(''); // State to store the new hobby
     const [editingHobbies, setEditingHobbies] = useState(false);
+    const [checkedHobbies, setCheckedHobbies] = useState([]);
 
     const toggleHobbySelection = (hobby) => {
-        if (selectedHobbies.includes(hobby)) {
-            setSelectedHobbies(selectedHobbies.filter((selected) => selected !== hobby));
-        } else {
-            setSelectedHobbies([...selectedHobbies, hobby]);
+        if (editingHobbies) {
+            if (checkedHobbies.includes(hobby)) {
+                setCheckedHobbies(checkedHobbies.filter((checked) => checked !== hobby));
+            } else {
+                setCheckedHobbies([...checkedHobbies, hobby]);
+            }
+        }
+    };
+
+    const addNewHobby = () => {
+        if (newHobby.trim() !== '') {
+            // Add the new hobby to the selected hobbies list
+            setSelectedHobbies([...selectedHobbies, newHobby]);
+            // Clear the text input
+            setNewHobby('');
         }
     };
 
     const saveHobbies = () => {
         // Implement the logic to save selectedHobbies to data store/db
+        setSelectedHobbies(selectedHobbies.filter((hobby) => !checkedHobbies.includes(hobby)));
+        setCheckedHobbies([]);
         setEditingHobbies(false);
     };
 
@@ -79,30 +94,45 @@ function AccountScreen({ route }) {
             <View style={{ paddingHorizontal: 30, marginBottom: 25 }}>
                 <Text style={{ textAlign: 'center', fontSize: 15, fontWeight: 'bold', marginTop: 15, marginBottom: 5 }}>Hobbies</Text>
                 {editingHobbies ? (
-                    <FlatList
-                        data={dummyAccountStore.hobbies}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity
-                                onPress={() => toggleHobbySelection(item)}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    marginBottom: 10,
-                                }}
-                            >
-                                <ImageBackground
-                                    source={selectedHobbies.includes(item) ? require('capstone/assets/checked.png') : require('capstone/assets/unchecked.png')}
-                                    style={{ width: 24, height: 24, marginRight: 10 }}
-                                />
-                                <Text style={{ textAlign: 'center' }}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>
-                            </TouchableOpacity>
-                        )}
-                        keyExtractor={keyExtractor}
-                    />
+                    <View>
+                        <FlatList
+                            data={selectedHobbies}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    onPress={() => toggleHobbySelection(item)}
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginBottom: 10,
+                                    }}
+                                >
+                                    <ImageBackground
+                                        source={checkedHobbies.includes(item) ? require('capstone/assets/checked.png') : require('capstone/assets/unchecked.png')}
+                                        style={{ width: 24, height: 24, marginRight: 10 }}
+                                    />
+                                    <Text style={{ textAlign: 'center' }}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>
+                                </TouchableOpacity>
+                            )}
+                            keyExtractor={keyExtractor}
+                        />
+
+                        {/* Text input for new hobby */}
+                        <TextInput
+                            placeholder="Enter new hobby"
+                            value={newHobby}
+                            onChangeText={(text) => setNewHobby(text)}
+                            style={{ borderWidth: 1, borderColor: 'gray', marginBottom: 10, paddingHorizontal: 8 }}
+                        />
+
+                        {/* Button to add new hobby */}
+                        <Button title="Add New Hobby" onPress={addNewHobby} />
+                    </View>
                 ) : (
                     <FlatList
                         data={selectedHobbies}
-                        renderItem={({ item }) => <Text style={{ textAlign: 'center' }}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>}
+                        renderItem={({ item }) => (
+                            <Text style={{ textAlign: 'center' }}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>
+                        )}
                         keyExtractor={keyExtractor}
                     />
                 )}

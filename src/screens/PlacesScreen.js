@@ -38,54 +38,11 @@ export default function PlacesScreen({ isMenuOpen }) {
     }
   }
 
-<<<<<<< Updated upstream
   async function handleClickLocation() {
     // Un-comment the following two lines to use test data.
     // setPlaces(testPlaces);
     // return;
     setPlaces(await getPlaces(isOriginCurrent, radius))
-=======
-  function handleClickApplySortAndFilters() {
-    /***
-     * 
-     * Logic for applying sort and filters to places
-     * 
-     * ***/
-  }
-
-  async function handleClickLoadFeed() {
-    setIsLoading(true);
-    const places = await getPlaces(radius);
-    setIsLoading(false);
-    if (places == null) {
-      return;
-    }
-    setPlaces(places);
-  }
-
-  function sortPlaces() {
-    if (places) {
-      const sortedPlaces = [...places].sort((a, b) => {
-        // Assuming that price_value is a numerical property
-        const aValue = a.price_value || 0;
-        const bValue = b.price_value || 0;
-  
-        // Change the comparison logic based on your needs 
-        return sortDirection === 'asc.' ? aValue - bValue : bValue - aValue;
-      });
-  
-      setPlaces(sortedPlaces);
-    }
-  }
-  
-  function handleClickApplySortAndFilters() {
-    sortPlaces();
-    // Apply other filters if needed
-  }
-
-  function handleClickLoadFeedTestData() {
-    setPlaces(testPlaces);
->>>>>>> Stashed changes
   }
 
   return (
