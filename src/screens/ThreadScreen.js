@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Button, TextInput, Text, View, FlatList } from 'react-native';
-import { getAuth, db,  addDoc, getDocs, getDoc, doc, collection, Timestamp } from '../firebase';
+import { getAuth, db,  addDoc, getDocs, getDoc, doc, collection } from '../firebase';
 import { useGlobal } from '../state/GlobalContext';
 import { useRoute } from "@react-navigation/native"
 
 export default function ThreadScreen() {
+    const userAuth = getAuth();
     const [text, onChangeText] = useState("");
     const { subforumTitle, setThreadTitle, } = useGlobal();
     

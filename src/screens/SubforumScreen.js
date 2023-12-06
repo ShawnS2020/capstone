@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useGlobal } from '../state/GlobalContext';
 import { StyleSheet, Button, Text, View, TouchableOpacity } from 'react-native';
-import { getAuth, db,  addDoc, getDocs, collection, Timestamp } from '../firebase';
+import { getAuth, db,  addDoc, getDocs, collection } from '../firebase';
 
 export default function SubforumScreen({ navigation }) {
+    const userAuth = getAuth();
     const { subforumTitle, setThreadTitle } = useGlobal();
     const [threadData, setThreadData] = useState([]);
     const [threadDocIDs, setThreadDocID] = useState([]);

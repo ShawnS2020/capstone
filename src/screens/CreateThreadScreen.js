@@ -1,15 +1,15 @@
 import { useGlobal } from '../state/GlobalContext';
 import React from 'react';
 import { StyleSheet, Button, View, TextInput } from 'react-native';
-import { db,  addDoc, collection, serverTimestamp, doc } from '../firebase';
-import { Firestore } from 'firebase/firestore';
+import { db,  addDoc, collection, serverTimestamp, doc, getAuth, setDoc, getDoc, updateDoc, query } from '../firebase';
+import 'firebase/auth';
 
 export default function CreateThreadScreen({ navigation }){
 
+    const userAuth = getAuth();
     const { subforumTitle, setThreadTitle } = useGlobal();
     const [newThreadTitle, onChangeTitle] = React.useState('');
     const [newThreadText, onChangeThreadText] = React.useState('');
-
 
     function handleClickThread(threadTitle, docID) {        // navigation function passes thread doc ID to load thread information in thread.js
         setThreadTitle(threadTitle);
@@ -25,10 +25,18 @@ export default function CreateThreadScreen({ navigation }){
                     `Subforums/${subforumTitle}/Threads/${docRef.id}/Comments`);
                 addDoc((db, commentsCollRef), {     // starts a collection for Comments in new Thread doc
                     text: newThreadText, createdAt: serverTimestamp()
-                })  
+                })
+                updatePostCount();
             });       
-
         }
+    async function updatePostCount(){   // update post count of user to +1
+        const userRef = doc(db, "Users", userAuth.currentUser.email);
+                const docSnap = await getDoc(userRef);
+                const userPosts = docSnap.data().posts;     // grabs the 'posts' field from the user document
+                    //console.log("docsnap email: " + docSnap.data().email);    // debugging
+                    updateDoc(userRef, { "posts": userPosts + 1});      // updates the 'posts' field to be incremented by 1
+
+    }
 
     return (
                 

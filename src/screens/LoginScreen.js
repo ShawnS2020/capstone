@@ -1,21 +1,25 @@
 import React from 'react';
 import { useGlobal } from '../state/GlobalContext';
 import { StyleSheet, TextInput, Text, View, Image, ScrollView, TouchableOpacity, Button } from 'react-native';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
+import { db, getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, 
+        serverTimestamp, collection, addDoc, doc, setDoc } from '../firebase';
 
 export default function LoginScreen({ route, navigation }) {
     const userAuth = getAuth();
     const [email, setEmail] = React.useState('');       // email and PW should use different states from React
     const [password, setPassword] = React.useState('');
     const { login } = useGlobal();
+    //const userID = auth.currentUser.uid;
 
-    function register(e){      // userCredential from Firebase documentation
+    async function register(e){      // userCredential from Firebase documentation
         e.preventDefault();
         createUserWithEmailAndPassword(userAuth, email, password)   // auth is given by device, used by firebase    
         .then(userCredential => {                               // 'const userID = auth.currentUser.uid;' can be used in homescreen
             console.log("User account created:", userCredential.user.email);    // ^ to set user ID within firebase to be same as auth ID
             signInWithEmailAndPassword(userAuth, email, password);
             login();
+            const userRef = doc(db, 'Users', email);    // create a doc in Users for new user using email as id
+                setDoc(userRef, {email: email, posts: 0, createdAt: serverTimestamp() });  
             navigation.navigate("Setup 1");
         }).catch(e => alert(e.message))   // throws error from Firebase documentation
     }
@@ -43,6 +47,7 @@ export default function LoginScreen({ route, navigation }) {
                 </View>
                 <View style = { styles.inputWidth }>
                     <TextInput style = { styles.textInputField }
+                        autoCapitalize='none'
                         placeholder = "Enter Email"
                         placeholderTextColor = "white"
                         value = { email }
