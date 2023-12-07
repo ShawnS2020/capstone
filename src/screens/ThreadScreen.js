@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Button, TextInput, Text, View, FlatList } from 'react-native';
-import { getAuth, db,  addDoc, getDocs, getDoc, doc, collection } from '../firebase';
+import { getAuth, db,  addDoc, getDocs, getDoc, doc, updateDoc, collection, serverTimestamp, orderBy, query } from '../firebase';
+
 import { useGlobal } from '../state/GlobalContext';
 import { useRoute } from "@react-navigation/native"
 
 export default function ThreadScreen() {
     const userAuth = getAuth();
-    const [text, onChangeText] = useState("");
+    const [commentText, onChangeCommentText] = useState("");
     const { subforumTitle, setThreadTitle, } = useGlobal();
     
     const [commentData, setCommentData] = useState([]);
@@ -14,15 +15,31 @@ export default function ThreadScreen() {
     const route = useRoute();
     const passedThreadID = route.params?.passedThreadID;    // taking passedThreadID from subforumScreen or CreateThreadScreen
                                                             // used below in updateCommentDocs()
+    const commentCollRef = collection(db, `Subforums/${subforumTitle}/Threads/${passedThreadID}/Comments`);
+    const orderedQuery = query(commentCollRef, orderBy('createdAt', 'asc')); 
+
     async function updateCommentDocs() {                                                  
-            const collectionRef = collection(db, `Subforums/${subforumTitle}/Threads/${passedThreadID}/Comments`);
-            const querySnapshot = await getDocs(collectionRef);
-            const data = querySnapshot.docs.map((doc) => doc.data().text + " ");
-                setCommentData(data);
-    }
+        const querySnapshot = await getDocs(orderedQuery);
+        const data = querySnapshot.docs.map((doc) => doc.data().text + " ");
+            setCommentData(data);
+}
     useEffect(() => {
         updateCommentDocs();
     }, []);
+
+    async function createComment(){
+        addDoc((db, commentCollRef), { createdBy: userAuth.currentUser.email, text: commentText, createdAt: serverTimestamp() });
+                updatePostCount();
+                updateCommentDocs();
+    }       
+    async function updatePostCount(){   // update post count of user to +1
+        const userRef = doc(db, "Users", userAuth.currentUser.email);
+                const docSnap = await getDoc(userRef);
+                const userPosts = docSnap.data().posts;     // grabs the 'posts' field from the user document
+                    //console.log("docsnap email: " + docSnap.data().email);    // debugging
+                    updateDoc(userRef, { "posts": userPosts + 1});      // updates the 'posts' field to be incremented by 1
+
+    }
 
     function handleContentSizeChange() {
         flatListRef.current.scrollToEnd();
@@ -51,13 +68,15 @@ export default function ThreadScreen() {
             <View style={ styles.bottomBar }>
                 <TextInput
                     style={ styles.textBar }
-                    placeholder='Enter text'
-                    onChangeText={(text) => { onChangeText(text); flatListRef.current.scrollToEnd()} }
-                    value={ text }
+                    placeholder='Enter a comment'
+                    onChangeText={(text) => { onChangeCommentText(text); } }
+                    onContentSizeChange={ handleContentSizeChange }
+                    value={ commentText }
+                    multiline= {true}
                     name="textInput"
                 />
                 <Button
-                    onPress={ () => dbWrite() } 
+                    onPress={ () => createComment() } 
                     title="Send"
                 />
             </View>
@@ -91,11 +110,13 @@ const styles = StyleSheet.create({
     textBar: {
         backgroundColor: "#505050",
         color: "#FFFFFF",
-        height: 40,
+        minHeight: 40,
+        maxHeight: 300,
         minWidth: 240,
         maxWidth: 250,
         paddingHorizontal: 16,
         borderRadius: 24,
         marginHorizontal: 8,
+        multiline: 'true',
     }
 });

@@ -1,7 +1,7 @@
 import { BROWSER_KEY } from "@env";
 import { initializeApp } from 'firebase/app';
 import { getFirestore, addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query, serverTimestamp,
-        updateDoc } from 'firebase/firestore';
+        updateDoc, orderBy } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator, } from "firebase/auth";
 
 // Initialize Firebase
@@ -22,4 +22,4 @@ export const db = getFirestore(FIREBASE_APP);
 export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
 export { addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query, getAuth, 
           createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator, serverTimestamp,
-          updateDoc }
+          updateDoc, orderBy }

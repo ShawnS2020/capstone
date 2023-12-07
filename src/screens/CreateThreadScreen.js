@@ -18,13 +18,13 @@ export default function CreateThreadScreen({ navigation }){
 
     async function createThread(){
         const collectionRef = collection(db, `Subforums/${ subforumTitle }/Threads`);
-        addDoc((db, collectionRef), { title: newThreadTitle, text: newThreadText, createdAt: serverTimestamp() })
+        addDoc((db, collectionRef), { title: newThreadTitle, text: newThreadText, createdBy: userAuth.currentUser.email, createdAt: serverTimestamp() })
             .then(docRef => { 
                 handleClickThread(newThreadTitle, docRef.id);   // navigate to the newly created thread
                 const commentsCollRef = collection(db,  // reference to a not-yet existing 'Comments' collection under new doc
                     `Subforums/${subforumTitle}/Threads/${docRef.id}/Comments`);
                 addDoc((db, commentsCollRef), {     // starts a collection for Comments in new Thread doc
-                    text: newThreadText, createdAt: serverTimestamp()
+                    createdBy: userAuth.currentUser.email, text: newThreadText, createdAt: serverTimestamp()
                 })
                 updatePostCount();
             });       
