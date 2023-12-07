@@ -123,7 +123,7 @@ export default function PlacesScreen({ isMenuOpen }) {
           </View>
         )}
       />
-      <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around' }}>
+      <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#FFFFF0' }}>
         <Button
          onPress={ handleClickLoadFeed }
          title="Load Places (API)"
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   placeContainer: {
     alignItems: 'left',
     paddingVertical: 8,
-    backgroundColor: '#FFF',
+    backgroundColor: '#FFFFF0',
   },
   placeHobby: {
     fontSize: 16,

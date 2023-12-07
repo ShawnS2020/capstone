@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useGlobal } from '../state/GlobalContext';
-import { StyleSheet, Button, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Button, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { getAuth, db,  addDoc, getDocs, collection } from '../firebase';
+import { myStyles } from './styles/forum_stylesheet';
 
 export default function SubforumScreen({ navigation }) {
     const userAuth = getAuth();
@@ -43,57 +44,64 @@ export default function SubforumScreen({ navigation }) {
     }, []);
 
     return (        
-        <View style={ styles.body }>
-            <View style = { styles.subforumList }>
-                <Text style = { styles.subforumText }>
+        <View style={ myStyles.container }>
+            <View style = { myStyles.subforumList }>
+                <Text style = { myStyles.subforumText }>
                      { subforumTitle } Subforum
                 </Text>
             </View>
-            <Button
-                onPress={() => navigation.navigate('Create Thread')}
-                title="New Thread Screen"
-            />
-            {threadData.map((element, index) => (       // loop through array of threads, create a TouchableOpacity (Button) for each thread
-                <TouchableOpacity
-                key={ index } // Use a unique key for each button
-                style={ styles.button }
-                onPress={() => handleClickThread(element, threadDocIDs[index])} 
-                >   
-                    <Text>{element}</Text>
-                </TouchableOpacity>
-            ))}
+
+            <ScrollView>
+                {threadData.map((element, index) => (       // loop through array of threads, create a TouchableOpacity (Button) for each thread
+                    <TouchableOpacity
+                    style={{padding:2}}
+                    key={ index } // Use a unique key for each button
+                    onPress={() => handleClickThread(element, threadDocIDs[index])} 
+                    >   
+                        <Text style={ myStyles.forum_text }>{element}</Text>
+                    </TouchableOpacity>
+                ))}
+            </ScrollView>
+            <TouchableOpacity 
+                style={myStyles.true_button}
+                onPress={() => navigation.navigate("Create Thread")}
+            >
+                <Text style={myStyles.button_text}>Add New Thread</Text>
+            </TouchableOpacity>
 
 
       </View>
     )
 }
 
-const styles = StyleSheet.create({
-    body: {
-        alignItems: 'center',
-        flex: 1,
-        backgroundColor: 'white',
-        paddingVertical: 20
-    },
-    subforumList: {
-        alignItems: 'center'
-    },
-    subforumText:{
-        fontSize: 40,
-        color: 'rgba(185, 15, 5, 1)'
-    },
-    button: {
-        alignItems: 'center',
-        width: '100%',
-        height: 50,
-        backgroundColor: 'rgba(180, 10, 30)',
-        paddingVertical: 12,
-        paddingHorizontal: 12,
-        borderRadius: 5,
-        marginTop: 5
-    },
-    buttonContent: {
-        color: 'gold',
-        fontWeight: '900'
-    }
-});
+// Leaving this here in case we need
+// const styles = StyleSheet.create({
+//     body: {
+//         alignItems: 'center',
+//         flex: 1,
+//         backgroundColor: 'white',
+//         paddingVertical: 20
+//     },
+//     subforumList: {
+//         alignItems: 'center'
+//     },
+//     subforumText:{
+//         fontSize: 40,
+//         padding:5,
+//         color: 'rgba(185, 15, 5, 1)'
+//     },
+//     button: {
+//         alignItems: 'center',
+//         width: '100%',
+//         height: 50,
+//         backgroundColor: 'rgba(180, 10, 30)',
+//         paddingVertical: 12,
+//         paddingHorizontal: 12,
+//         borderRadius: 5,
+//         marginTop: 5
+//     },
+//     buttonContent: {
+//         color: 'gold',
+//         fontWeight: '900'
+//     }
+// });

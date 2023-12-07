@@ -6,7 +6,7 @@ import LoginScreen from './LoginScreen.js';
 import ThreadScreen from './ThreadScreen.js';
 import SetupScreen1 from './SetupScreen1.js';
 import SetupScreen2 from './SetupScreen2.js';
-import SetupScreen3 from './SetupScreen3.js';
+import SetupScreen3 from './SetUpScreen3.js';
 import PlacesScreen from './PlacesScreen.js';
 import CreateThreadScreen from './CreateThreadScreen.js';
 

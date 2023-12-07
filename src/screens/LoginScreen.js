@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     body: {
         alignItems: 'center',
         height: '150%',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#FFFFF0',
         paddingVertical: 15
     }, 
     imageStyle: {
