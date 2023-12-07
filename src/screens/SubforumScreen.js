@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useGlobal } from '../state/GlobalContext';
-import { StyleSheet, Button, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { getAuth, db,  addDoc, getDocs, collection } from '../firebase';
 import { myStyles } from './styles/forum_stylesheet';
 
