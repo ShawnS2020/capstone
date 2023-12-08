@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useGlobal } from '../state/GlobalContext';
-import { Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import { getAuth, db,  addDoc, getDocs, collection } from '../firebase';
+import { Button, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { getAuth, db,  addDoc, getDocs, collection, query, orderBy } from '../firebase';
 import { myStyles } from './styles/forum_stylesheet';
 
 export default function SubforumScreen({ navigation }) {
@@ -9,6 +9,8 @@ export default function SubforumScreen({ navigation }) {
     const { subforumTitle, setThreadTitle } = useGlobal();
     const [threadData, setThreadData] = useState([]);
     const [threadDocIDs, setThreadDocID] = useState([]);
+    const threadCollRef = collection(db, `Subforums/${subforumTitle}/Threads`);
+    const orderedQuery = query(threadCollRef, orderBy('createdAt', 'asc'));
 
     function handleClickThread(threadTitle, docID) {    // now takes a docID to pass to the Thread screen
         setThreadTitle(threadTitle);
@@ -16,8 +18,7 @@ export default function SubforumScreen({ navigation }) {
     }
 
     async function updateDocs() {                          
-        const collectionRef = collection(db, `Subforums/${subforumTitle}/Threads`);
-        const querySnapshot = await getDocs(collectionRef);     // getting a snapshot of all docs in Threads collection
+        const querySnapshot = await getDocs(orderedQuery);     // getting a snapshot of all docs in Threads collection
         const data = querySnapshot.docs.map((doc) => doc.data().title + " ");
             setThreadData(data);        // updating global var threadData to be '(Thread n Title) (Thread n+1 title ...)'
         console.log("update threads");  
@@ -32,9 +33,8 @@ export default function SubforumScreen({ navigation }) {
     // document ID for 'Thread 2' will be the second doc ID grabbed by updateDocIDs
     // thus the second doc grabbed will have its title in index location 2 of threadData array
     // and its doc ID in index location 2 of threadDocIDs array
-    async function updateDocIDs() {                                              
-        const collectionRef = collection(db, `Subforums/${subforumTitle}/Threads`);     
-        const querySnapshot = await getDocs(collectionRef);
+    async function updateDocIDs() {                                                   
+        const querySnapshot = await getDocs(threadCollRef);
         const data = querySnapshot.docs.map((doc) => doc.id);
             setThreadDocID(data);
         console.log("update thread ids");
@@ -51,7 +51,9 @@ export default function SubforumScreen({ navigation }) {
                 </Text>
             </View>
 
-            <ScrollView>
+            <ScrollView 
+                style={myStyles.shadow_container}
+            >
                 {threadData.map((element, index) => (       // loop through array of threads, create a TouchableOpacity (Button) for each thread
                     <TouchableOpacity
                     style={{padding:2}}
@@ -68,7 +70,6 @@ export default function SubforumScreen({ navigation }) {
             >
                 <Text style={myStyles.button_text}>Add New Thread</Text>
             </TouchableOpacity>
-
 
       </View>
     )

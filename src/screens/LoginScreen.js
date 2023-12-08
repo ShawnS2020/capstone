@@ -39,7 +39,7 @@ export default function LoginScreen({ route, navigation }) {
     }
 
     return (     
-        <ScrollView>
+        <ScrollView style={{flex:1}}>
             <View style={ styles.body }>
                 <Image source={ {uri: 'https://i.imgur.com/lL1nZ82.png'} } style={ styles.imageStyle } />
                 <View style = { styles.titleCont }>
@@ -97,6 +97,7 @@ export default function LoginScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
     body: {
+        flex:1,
         alignItems: 'center',
         height: '150%',
         backgroundColor: '#FFFFF0',
