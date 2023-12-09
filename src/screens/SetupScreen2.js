@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { observer, inject } from 'mobx-react';
 import {View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, ScrollView} from 'react-native';
 import RoundButton from '../components/RoundButton';
+import { useGlobal } from '../state/GlobalContext';
 
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
 export default inject("dummyAccountStore")(observer(({ dummyAccountStore, navigation }) => {
+  const { loadFeed } = useGlobal();
   const [input, setInput] = useState('');
   const [hobbies, setHobbies] = useState([]);
 
@@ -22,6 +24,7 @@ export default inject("dummyAccountStore")(observer(({ dummyAccountStore, naviga
 
   function handleNextButtonClick() {
     dummyAccountStore.changeHobbies(hobbies);
+    loadFeed();
     navigation.navigate("Setup 3");
   }
 

@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Text, FlatList, View, Button, StyleSheet, Image, Linking, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { getPlaces, getDistanceAndDetails } from '../api/PlacesAPI';
+import { useGlobal } from '../state/GlobalContext';
 import PlacesMenu from '../components/PlacesMenu';
 import StarRating from '../components/StarRating';
-import testPlaces from '../api/TestPlaces';
 
 export default function PlacesScreen({ isMenuOpen }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [places, setPlaces] = useState(null);
+  const { places, isLoading, loadFeed } = useGlobal();
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [sortType, setSortType] = useState('none');
   const [sortDirection, setSortDirection] = useState('asc.');
@@ -36,25 +34,6 @@ export default function PlacesScreen({ isMenuOpen }) {
      * Logic for applying sort and filters to places
      * 
      * ***/
-  }
-
-  // This is the main function that loads places from the APIs.
-  // Photos, distance from user, and website links are loaded in after the initial load.
-  async function handleClickLoadFeed() {
-    setIsLoading(true);
-    const places = await getPlaces();
-    setIsLoading(false);
-    if (places == null) {
-      return;
-    }
-    setPlaces(places);
-    console.log("Places set");
-    await getDistanceAndDetails(places);
-    console.log("Distance and details set");
-  }
-
-  function handleClickLoadFeedTestData() {
-    setPlaces(testPlaces);
   }
 
   return (
@@ -123,16 +102,6 @@ export default function PlacesScreen({ isMenuOpen }) {
           </View>
         )}
       />
-      <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around' }}>
-        <Button
-         onPress={ handleClickLoadFeed }
-         title="Load Places (API)"
-        />
-        <Button
-         onPress={ handleClickLoadFeedTestData }
-         title="Load test data"
-        />
-      </View>
     </View>
   );
 }

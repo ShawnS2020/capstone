@@ -8,7 +8,7 @@ export default function LoginScreen({ route, navigation }) {
     const userAuth = getAuth();
     const [email, setEmail] = React.useState('');       // email and PW should use different states from React
     const [password, setPassword] = React.useState('');
-    const { login } = useGlobal();
+    const { login, loadFeed } = useGlobal();
     //const userID = auth.currentUser.uid;
 
     async function register(e){      // userCredential from Firebase documentation
@@ -30,11 +30,8 @@ export default function LoginScreen({ route, navigation }) {
         .then((userCredential) => {                 
             console.log("User signed in:", userCredential.user.email);
             login();
-            /*** TODO: is this check redundant? ***/
-            if (userCredential) {
-                navigation.navigate("Nav Tabs");
-            }
-            // if(login) navigation.navigate("Nav Tabs");                    // if user successfully logs{}                                  
+            loadFeed();
+            navigation.navigate("Nav Tabs");
         }).catch(e => alert(e.message));
     }
 
@@ -75,7 +72,7 @@ export default function LoginScreen({ route, navigation }) {
                     <TouchableOpacity style={ styles.button }
                         onPress={ () => {
                             // Only log in if user in on forum screen
-                            if (route.name == "Forum Hub") login()
+                            route.name == "Forum Hub" ? login() : loadFeed();
                             navigation.navigate("Nav Tabs");
                         } }
                     >
