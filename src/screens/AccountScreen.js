@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { observer, inject } from 'mobx-react';
-import { View, Text, ScrollView, TouchableWithoutFeedback, Image, StyleSheet, Switch, TextInput } from 'react-native';
+import { View, Text, ScrollView, ImageBackground, Button, TouchableWithoutFeedback, Image, StyleSheet, Switch, TextInput, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { getPredictions, getCoordinates } from '../api/PlaceAutocomplete';
 
@@ -12,6 +12,38 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
     const [textInputYPosition, setTextInputYPosition] = useState(0);
     const [predictions, setPredictions] = useState([]);
     const scrollViewRef = useRef();
+
+    const [selectedHobbies, setSelectedHobbies] = useState([...dummyAccountStore.hobbies]);
+    const [newHobby, setNewHobby] = useState(''); // State to store the new hobby
+    const [editingHobbies, setEditingHobbies] = useState(false);
+    const [checkedHobbies, setCheckedHobbies] = useState([]);
+
+    const toggleHobbySelection = (hobby) => {
+        if (editingHobbies) {
+            if (checkedHobbies.includes(hobby)) {
+                setCheckedHobbies(checkedHobbies.filter((checked) => checked !== hobby));
+            } else {
+                setCheckedHobbies([...checkedHobbies, hobby]);
+            }
+        }
+    };
+
+    const addNewHobby = () => {
+        if (newHobby.trim() !== '') {
+            // Add the new hobby to the selected hobbies list
+            setSelectedHobbies([...selectedHobbies, newHobby]);
+            // Clear the text input
+            setNewHobby('');
+        }
+    };
+
+    const saveHobbies = () => {
+        // Implement the logic to save selectedHobbies to data store/db
+        setSelectedHobbies(selectedHobbies.filter((hobby) => !checkedHobbies.includes(hobby)));
+        setCheckedHobbies([]);
+        setEditingHobbies(false);
+    };
+
 
     async function handleEditHomeLocation() {
         setIsEditingHomeLocation(!isEditingHomeLocation);
@@ -38,26 +70,61 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
     }
 
     return (
-        <ScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.container}>
+        <ScrollView ref={scrollViewRef} style={styles.container} contentContainerStyle={{ alignItems: 'center' }}>
             <Image 
                 source={{uri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSOUNJZAWeC9NIB0R7h22mZwfRMTEHr7PBDNihFBmmR4U8fklya'}}
                 style={{width: 100, height: 100, alignSelf: 'center' }}
             />
             <Text style={styles.usernameText}>{dummyAccountStore.username}</Text>
-            <Text style={[styles.text, styles.header]}>Hobbies</Text>
-            {dummyAccountStore.hobbies.map((hobby, index) => (
-                <Text key={index}>{hobby.charAt(0).toUpperCase() + hobby.slice(1)}</Text>
-            ))}
-            <Text style={styles.header}>Home Location</Text>
+
             <View style={styles.row}>
-                <Text style={styles.homeLocation}>{homeLocation.description}</Text>
+                <Text style={styles.header}>Hobbies</Text>
+                <TouchableWithoutFeedback onPress={ () => editingHobbies ? saveHobbies() : setEditingHobbies(true) }>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialIcons name={ editingHobbies ? 'check' : 'mode-edit'} size={24} />
+                    </View>
+                </TouchableWithoutFeedback>
+            </View>
+            {editingHobbies ? (
+                <View>
+                    {selectedHobbies.map((hobby, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => toggleHobbySelection(hobby)}
+                            style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}
+                        >
+                            <ImageBackground
+                                source={checkedHobbies.includes(hobby) ? require('capstone/assets/unchecked.png') : require('capstone/assets/checked.png')}
+                                style={{ width: 24, height: 24, marginRight: 10 }}
+                            />
+                            <Text>{hobby.charAt(0).toUpperCase() + hobby.slice(1)}</Text>
+                        </TouchableOpacity>
+                    ))}
+                    <View style={styles.row}>
+                        <TextInput
+                            placeholder="Enter new hobby"
+                            value={newHobby}
+                            onChangeText={(text) => setNewHobby(text)}
+                            style={{ borderWidth: 1, borderColor: 'gray', paddingHorizontal: 8 }}
+                        />
+                        <Button title="Add" onPress={addNewHobby} color='black'/>
+                    </View>
+                </View>
+            ) : (
+                selectedHobbies.map((hobby, index) => (
+                    <Text key={index}>{hobby.charAt(0).toUpperCase() + hobby.slice(1)}</Text>
+                ))
+            )}
+
+            <View style={styles.row}>
+                <Text style={styles.header}>Home Location</Text>
                 <TouchableWithoutFeedback onPress={handleEditHomeLocation}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <MaterialIcons name={iconName} size={24} />
                     </View>
                 </TouchableWithoutFeedback>
             </View>
+            <Text style={styles.homeLocation}>{homeLocation.description}</Text>
             {isEditingHomeLocation && (
                 <>
                     <TextInput
@@ -77,7 +144,7 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
                             setSearchQuery(prediction.structured_formatting.main_text);
                         }}>
                         <View key={index} style={styles.searchQueryPrediction}>
-                            <Text style={styles.searchQueryPredictionMainText}>{prediction.structured_formatting.main_text}</Text>
+                            <Text>{prediction.structured_formatting.main_text}</Text>
                             <Text style={styles.searchQueryPredictionSecondaryText}>{prediction.structured_formatting.secondary_text}</Text>
                             <View style={styles.searchQueryPredictionDivider} />
                         </View>
@@ -92,7 +159,6 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
                 onValueChange={toggleUseCurrentLocation}
               />
             </View>
-        </View>
         </ScrollView>
     );
 }));
@@ -100,8 +166,7 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
 const styles = StyleSheet.create({
     container: {
         height: '100%',
-        alignItems: 'center',
-        backgroundColor: '#FFF'
+        backgroundColor: '#FFF',
     },
     row: {
         flexDirection: 'row',
@@ -116,6 +181,7 @@ const styles = StyleSheet.create({
     header: {
         fontWeight: 'bold',
         marginVertical: 8,
+        fontSize: 16
     },
     hobbyList: {
         flexGrow: 0,
@@ -134,9 +200,6 @@ const styles = StyleSheet.create({
     },
     searchQueryPrediction: {
         minWidth: 280,
-
-    },
-    searchQueryPredictionMainText: {
     },
     searchQueryPredictionSecondaryText: {
         color: 'gray',
