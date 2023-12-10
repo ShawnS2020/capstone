@@ -75,7 +75,6 @@ export const myStyles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 24,
         marginHorizontal: 8,
-        multiline: 'true',
     },
 
     send: {
