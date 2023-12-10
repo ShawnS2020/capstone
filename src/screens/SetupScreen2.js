@@ -2,19 +2,18 @@ import { useState } from 'react';
 import { observer, inject } from 'mobx-react';
 import {View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, ScrollView} from 'react-native';
 import RoundButton from '../components/RoundButton';
-import { useGlobal } from '../state/GlobalContext';
 
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
 export default inject("dummyAccountStore")(observer(({ dummyAccountStore, navigation }) => {
-  const { loadFeed } = useGlobal();
-  const [input, setInput] = useState('');
+  const [username, setUsername] = useState('');
+  const [hobbyInput, setHobbyInput] = useState('');
   const [hobbies, setHobbies] = useState([]);
 
   function handleAddHobby() {
-    if (input != '' && !hobbies.includes(input)) {
-      setHobbies([...hobbies, input]);
-      setInput('');
+    if (hobbyInput != '' && !hobbies.includes(hobbyInput)) {
+      setHobbies([...hobbies, hobbyInput]);
+      setHobbyInput('');
     }
   }
 
@@ -24,7 +23,7 @@ export default inject("dummyAccountStore")(observer(({ dummyAccountStore, naviga
 
   function handleNextButtonClick() {
     dummyAccountStore.changeHobbies(hobbies);
-    loadFeed();
+    dummyAccountStore.changeUsername(username)
     navigation.navigate("Setup 3");
   }
 
@@ -34,22 +33,33 @@ export default inject("dummyAccountStore")(observer(({ dummyAccountStore, naviga
 
   return (
     <ImageBackground source={image}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
+      <ScrollView style={styles.container} contentContainerStyle={{flexGrow: 1}}>
           <View style={styles.upper}>
-            <Text style={{fontSize: 20}}>{'Type some hobbies you enjoy or\n are interested in.'}</Text>
-            <View style={styles.wrapper}>
+            <View style={styles.section}>
+              <Text style={{fontSize: 20}}>Create a username.</Text>
               <TextInput
-                value={input}
-                onChangeText={setInput}
-                placeholder={'Enter your hobbies'}
+                value={username}
+                onChangeText={setUsername}
+                placeholder={'Enter username'}
                 style={styles.inputStyle}
               />
-              <TouchableOpacity
-                onPress={handleAddHobby}
-                style={styles.addButton}
-              >
-                <Text style={{color: '#FFF'}}>Add</Text>
-              </TouchableOpacity>
+            </View>
+            <View style={styles.section}>
+              <Text style={{fontSize: 20}}>{'Type some hobbies you enjoy or\n are interested in.'}</Text>
+              <View style={styles.wrapper}>
+                <TextInput
+                  value={hobbyInput}
+                  onChangeText={setHobbyInput}
+                  placeholder={'Enter your hobbies'}
+                  style={styles.inputStyle}
+                />
+                <TouchableOpacity
+                  onPress={handleAddHobby}
+                  style={styles.addButton}
+                >
+                  <Text style={{color: '#FFF'}}>Add</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
           <View style={styles.hobbiesContainer}>
@@ -87,15 +97,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.9)',
     height: '100%'
   },
-  contentContainerStyle: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   upper: {
     alignItems: 'center',
-    rowGap: 12,
-    marginTop: '50%'
+    rowGap: 80,
+    marginTop: '25%',
+  },
+  section: {
+    rowGap: 8,
+    alignItems: 'center',
   },
   lower: {
     rowGap: 10,
@@ -131,8 +140,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   hobbyText: {
-    marginHorizontal: 8,
+    paddingHorizontal: 8,
     minWidth: '25%',
+    backgroundColor: '#EEE',
+    lineHeight: 32
   },
   deleteButton: {
     alignItems: 'center',
