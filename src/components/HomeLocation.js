@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableWithoutFeedback, TextInput, Switch } f
 import { inject, observer } from 'mobx-react';
 import { getPredictions, getCoordinates } from '../api/PlaceAutocomplete';
 
-export default inject('dummyAccountStore')(observer(({ setHomeLocation }) => {
+export default inject('dummyAccountStore')(observer(({ setHomeLocation, scrollViewRef, textInputYPosition }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [predictions, setPredictions] = useState([]);
 
@@ -19,6 +19,7 @@ export default inject('dummyAccountStore')(observer(({ setHomeLocation }) => {
                 onChangeText={(text) => {
                     setSearchQuery(text);
                     handleHomeLocationOnChange();
+                    if (scrollViewRef) scrollViewRef.current.scrollTo({ y: textInputYPosition })
                 }}
                 value={searchQuery}
                 style={styles.searchBar}
@@ -40,19 +41,6 @@ export default inject('dummyAccountStore')(observer(({ setHomeLocation }) => {
 }));
 
 const styles = StyleSheet.create({
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    header: {
-        fontWeight: 'bold',
-        marginVertical: 8,
-        fontSize: 16
-    },
-    homeLocation: {
-        maxWidth: '80%',
-    },
     searchBar: {
         minWidth: 280,
         height: 36,
@@ -75,11 +63,5 @@ const styles = StyleSheet.create({
         borderBottomColor: 'gray',
         borderBottomWidth: 1,
         marginVertical: 4,
-    },
-    useCurrentLocationSwitch: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
-        justifyContent: 'space-around',
     },
 });

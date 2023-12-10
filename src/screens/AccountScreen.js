@@ -2,19 +2,18 @@ import { useState, useRef } from 'react';
 import { observer, inject } from 'mobx-react';
 import { View, Text, ScrollView, ImageBackground, Button, TouchableWithoutFeedback, Image, StyleSheet, Switch, TextInput, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; 
-import { getPredictions, getCoordinates } from '../api/PlaceAutocomplete';
+import { getCoordinates } from '../api/PlaceAutocomplete';
+import HomeLocation from '../components/HomeLocation';
 
 export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
     const [homeLocation, setHomeLocation] = useState(dummyAccountStore.homeLocation);
     const [isEditingHomeLocation, setIsEditingHomeLocation] = useState(false);
     const [iconName, setIconName] = useState('mode-edit');
-    const [searchQuery, setSearchQuery] = useState(homeLocation.description);
     const [textInputYPosition, setTextInputYPosition] = useState(0);
-    const [predictions, setPredictions] = useState([]);
     const scrollViewRef = useRef();
 
     const [selectedHobbies, setSelectedHobbies] = useState([...dummyAccountStore.hobbies]);
-    const [newHobby, setNewHobby] = useState(''); // State to store the new hobby
+    const [newHobby, setNewHobby] = useState('');
     const [editingHobbies, setEditingHobbies] = useState(false);
     const [checkedHobbies, setCheckedHobbies] = useState([]);
 
@@ -58,11 +57,6 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
                 dummyAccountStore.changeHomeLocation({ description: homeLocation.description, coordinates: [coordinates.lat, coordinates.lng] });
             }
         }
-    }
-
-    async function handleHomeLocationOnChange() {
-        const predictions = await getPredictions(searchQuery);
-        setPredictions(predictions);
     }
 
     function toggleUseCurrentLocation() {
@@ -126,31 +120,9 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
             </View>
             <Text style={styles.homeLocation}>{homeLocation.description}</Text>
             {isEditingHomeLocation && (
-                <>
-                    <TextInput
-                        onLayout={(event) => setTextInputYPosition(event.nativeEvent.layout.y)}
-                        selectTextOnFocus={true}
-                        onChangeText={(text) => {
-                            setSearchQuery(text);
-                            handleHomeLocationOnChange();
-                            scrollViewRef.current.scrollTo({ y: textInputYPosition });
-                        }}
-                        value={searchQuery}
-                        style={styles.searchBar}
-                    />
-                    {predictions.map((prediction, index) => (
-                        <TouchableWithoutFeedback key={index} onPress={() => {
-                            setHomeLocation(prediction);
-                            setSearchQuery(prediction.structured_formatting.main_text);
-                        }}>
-                        <View key={index} style={styles.searchQueryPrediction}>
-                            <Text>{prediction.structured_formatting.main_text}</Text>
-                            <Text style={styles.searchQueryPredictionSecondaryText}>{prediction.structured_formatting.secondary_text}</Text>
-                            <View style={styles.searchQueryPredictionDivider} />
-                        </View>
-                        </TouchableWithoutFeedback>
-                    ))}
-                </>
+                <View onLayout={(event) => setTextInputYPosition(event.nativeEvent.layout.y)}>
+                    <HomeLocation setHomeLocation={setHomeLocation} scrollViewRef={scrollViewRef} textInputYPosition={textInputYPosition}  />
+                </View>
             )}
             <View style={styles.useCurrentLocationSwitch}>
               <Text>Use current Location</Text>
@@ -188,26 +160,6 @@ const styles = StyleSheet.create({
     },
     homeLocation: {
         maxWidth: '80%',
-    },
-    searchBar: {
-        minWidth: 280,
-        height: 36,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 20,
-        marginVertical: 8,
-        paddingHorizontal: 8,
-    },
-    searchQueryPrediction: {
-        minWidth: 280,
-    },
-    searchQueryPredictionSecondaryText: {
-        color: 'gray',
-    },
-    searchQueryPredictionDivider: {
-        borderBottomColor: 'gray',
-        borderBottomWidth: 1,
-        marginVertical: 4,
     },
     text: {
         fontSize: 16,
