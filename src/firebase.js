@@ -1,4 +1,4 @@
-import { BROWSER_KEY } from "@env";
+// import { BROWSER_KEY } from "@env";
 import { initializeApp } from 'firebase/app';
 import { getFirestore, addDoc, getDoc, getDocs, setDoc, doc, collection, onSnapshot, query, serverTimestamp,
         updateDoc, orderBy } from 'firebase/firestore';

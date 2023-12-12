@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   placeContainer: {
     alignItems: 'left',
     paddingVertical: 8,
-    backgroundColor: '#FFF',
+    backgroundColor: '#FFFFF0',
   },
   placeHobby: {
     fontSize: 16,

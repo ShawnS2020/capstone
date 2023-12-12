@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Button, TextInput, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Button, TextInput, Text, View, ScrollView, TouchableOpacity} from 'react-native';
 import { getAuth, db,  addDoc, getDocs, getDoc, doc, updateDoc, collection, serverTimestamp, orderBy, query } from '../firebase';
-
 import { useGlobal } from '../state/GlobalContext';
 import { useRoute } from "@react-navigation/native"
+import { myStyles } from './styles/forum_stylesheet';
 
 export default function ThreadScreen() {
     const userAuth = getAuth();
@@ -41,13 +41,14 @@ export default function ThreadScreen() {
 
     }
 
-    function handleContentSizeChange() {
-        flatListRef.current.scrollToEnd();
-    }
+    // function handleContentSizeChange() {
+    //     flatListRef.current.scrollToEnd();
+    // }
 
     return (     
-        <View style={ styles.body }>
-            <FlatList
+        <View style={ myStyles.body }>
+            {/* don't need the flatlist */}
+            {/* <FlatList
                 ref = { flatListRef }
                 style = { { flex: 1, backgroundColor: "#C0C0C0" } }
                 contentContainerStyle={styles.chatContainer}
@@ -56,29 +57,39 @@ export default function ThreadScreen() {
                     <Text style={ styles.chat }>{item}</Text>
                 )}
                 onContentSizeChange={ handleContentSizeChange }
-            />
-            {commentData.map((element, index) => (       // loop through array of comments
-                <View
-                key={ index } // Use a unique key for each button
+            /> */}
+            <ScrollView>
+                {commentData.map((element, index) => (       // loop through array of comments
+                    <View
+                    style={myStyles.chatContainer}
+                    key={ index } // Use a unique key for each button
+                    >   
+                        <Text style={myStyles.chat}>{element}</Text>
+                    </View>
+                ))}
+            </ScrollView>
                 
-                >   
-                    <Text>{element}</Text>
-                </View>
-            ))}
-            <View style={ styles.bottomBar }>
+            <View style={ myStyles.bottomBar }>
                 <TextInput
-                    style={ styles.textBar }
+                    style={ myStyles.textBar }
                     placeholder='Enter a comment'
                     onChangeText={(text) => { onChangeCommentText(text); } }
-                    onContentSizeChange={ handleContentSizeChange }
+                    // onContentSizeChange={ handleContentSizeChange }
                     value={ commentText }
                     multiline= {true}
                     name="textInput"
                 />
-                <Button
+                {/* <Button
                     onPress={ () => createComment() } 
                     title="Send"
-                />
+                /> */}
+
+                <TouchableOpacity  
+                    onPress={() => createComment()}
+                    style={myStyles.send_button}
+                >
+                    <Text style={myStyles.send}>Send</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -119,4 +130,4 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
         multiline: 'true',
     }
-});
+})
