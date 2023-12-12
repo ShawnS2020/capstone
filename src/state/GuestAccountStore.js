@@ -1,18 +1,18 @@
 import { observable, action, makeObservable } from 'mobx';
 
-class DummyAccountStore {
+class GuestAccountStore {
     constructor() {
         makeObservable(this);
     }
 
     @observable
-    username = "John Smith";
+    username = "Guest";
 
     @observable
-    hobbies = ["guitar", "coding", "reading", "hiking"]
+    hobbies = []
 
     @observable
-    homeLocation = { description: 'City Hall, New York, NY, USA', coordinates: [40.712626, -74.005597] };
+    homeLocation = { description: '', coordinates: [] };
 
     @observable
     useCurrentLocation = false;
@@ -48,6 +48,6 @@ class DummyAccountStore {
     }
 }
 
-const dummyAccountStore = new DummyAccountStore();
+const guestAccountStore = new GuestAccountStore();
 
-export default dummyAccountStore;
+export default guestAccountStore;

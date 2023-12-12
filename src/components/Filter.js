@@ -1,9 +1,9 @@
 import { View, Text, TouchableWithoutFeedback, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import dummyAccountStore from '../state/DummyAccountStore';
+import guestAccountStore from '../state/GuestAccountStore';
 
 export default function FilterDropdown({ handleClickFilterItem, enabledFilters }) {
-    const filters = ['1 mile', '5 miles', '10 miles', '$', '$$', '$$$', '$$$$', ...dummyAccountStore.hobbies]
+    const filters = ['1 mile', '5 miles', '10 miles', '$', '$$', '$$$', '$$$$', ...guestAccountStore.hobbies]
     // Sort filters so that elements that exist in enabledFilters are at the beginning of filters.
     filters.sort((a, b) => {
         if (enabledFilters.includes(a) && !enabledFilters.includes(b)) {

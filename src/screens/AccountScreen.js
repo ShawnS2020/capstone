@@ -5,14 +5,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { getCoordinates } from '../api/PlaceAutocomplete';
 import HomeLocation from '../components/HomeLocation';
 
-export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
-    const [homeLocation, setHomeLocation] = useState(dummyAccountStore.homeLocation);
+export default inject('guestAccountStore')(observer(({ guestAccountStore }) => {
+    const [homeLocation, setHomeLocation] = useState(guestAccountStore.homeLocation);
     const [isEditingHomeLocation, setIsEditingHomeLocation] = useState(false);
     const [iconName, setIconName] = useState('mode-edit');
     const [textInputYPosition, setTextInputYPosition] = useState(0);
     const scrollViewRef = useRef();
 
-    const [selectedHobbies, setSelectedHobbies] = useState([...dummyAccountStore.hobbies]);
+    const [selectedHobbies, setSelectedHobbies] = useState([...guestAccountStore.hobbies]);
     const [newHobby, setNewHobby] = useState('');
     const [editingHobbies, setEditingHobbies] = useState(false);
     const [checkedHobbies, setCheckedHobbies] = useState([]);
@@ -39,6 +39,7 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
     const saveHobbies = () => {
         // Implement the logic to save selectedHobbies to data store/db
         setSelectedHobbies(selectedHobbies.filter((hobby) => !checkedHobbies.includes(hobby)));
+        guestAccountStore.changeHobbies(selectedHobbies.filter((hobby) => !checkedHobbies.includes(hobby)));
         setCheckedHobbies([]);
         setEditingHobbies(false);
     };
@@ -52,15 +53,15 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
             setIconName('mode-edit');
             // Update Account Store if homeLocation has changed.
             // This check is necessary because homeLocation.place_id will not exist unless a prediction is selected.
-            if (homeLocation.description != dummyAccountStore.homeLocation.description) {
+            if (homeLocation.description != guestAccountStore.homeLocation.description) {
                 const coordinates = await getCoordinates(homeLocation.place_id);
-                dummyAccountStore.changeHomeLocation({ description: homeLocation.description, coordinates: [coordinates.lat, coordinates.lng] });
+                guestAccountStore.changeHomeLocation({ description: homeLocation.description, coordinates: [coordinates.lat, coordinates.lng] });
             }
         }
     }
 
     function toggleUseCurrentLocation() {
-        dummyAccountStore.toggleUseCurrentLocation();
+        guestAccountStore.toggleUseCurrentLocation();
     }
 
     return (
@@ -69,7 +70,7 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
                 source={{uri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSOUNJZAWeC9NIB0R7h22mZwfRMTEHr7PBDNihFBmmR4U8fklya'}}
                 style={{width: 100, height: 100, alignSelf: 'center' }}
             />
-            <Text style={styles.usernameText}>{dummyAccountStore.username}</Text>
+            <Text style={styles.usernameText}>{guestAccountStore.username}</Text>
 
             <View style={styles.row}>
                 <Text style={styles.header}>Hobbies</Text>
@@ -127,7 +128,7 @@ export default inject('dummyAccountStore')(observer(({ dummyAccountStore }) => {
             <View style={styles.useCurrentLocationSwitch}>
               <Text>Use current Location</Text>
               <Switch
-                value={dummyAccountStore.useCurrentLocation}
+                value={guestAccountStore.useCurrentLocation}
                 onValueChange={toggleUseCurrentLocation}
               />
             </View>

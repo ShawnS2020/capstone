@@ -8,18 +8,18 @@ import RoundButton from '../components/RoundButton';
 
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
-export default inject("dummyAccountStore")(observer(({ dummyAccountStore, navigation }) => {
+export default inject("guestAccountStore")(observer(({ guestAccountStore, navigation }) => {
     const { loadFeed } = useGlobal();
-    const [homeLocation, setHomeLocation] = useState(dummyAccountStore.homeLocation);
+    const [homeLocation, setHomeLocation] = useState(guestAccountStore.homeLocation);
 
     function toggleUseCurrentLocation() {
-        dummyAccountStore.toggleUseCurrentLocation();
+        guestAccountStore.toggleUseCurrentLocation();
     }
 
     async function handleNextButtonClick() {
-        if (homeLocation.description != dummyAccountStore.homeLocation.description) {
+        if (homeLocation.description != guestAccountStore.homeLocation.description) {
             const coordinates = await getCoordinates(homeLocation.place_id);
-            dummyAccountStore.changeHomeLocation({ description: homeLocation.description, coordinates: [coordinates.lat, coordinates.lng] });
+            guestAccountStore.changeHomeLocation({ description: homeLocation.description, coordinates: [coordinates.lat, coordinates.lng] });
         }
         loadFeed();
         navigation.navigate("Setup 4");
@@ -40,7 +40,7 @@ export default inject("dummyAccountStore")(observer(({ dummyAccountStore, naviga
                     <View style={styles.useCurrentLocationSwitch}>
                       <Text style={{fontSize: 20}}>Enable device location</Text>
                       <Switch
-                        value={dummyAccountStore.useCurrentLocation}
+                        value={guestAccountStore.useCurrentLocation}
                         onValueChange={toggleUseCurrentLocation}
                       />
                     </View>

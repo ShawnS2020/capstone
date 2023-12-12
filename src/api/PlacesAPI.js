@@ -1,15 +1,16 @@
 import { IOS_KEY } from "@env";
 import getLocation from "./ExpoLocation";
-import dummyAccountStore from "../state/DummyAccountStore";
+import guestAccountStore from "../state/GuestAccountStore";
 
 async function getPlaces() {
-    const originLocation = dummyAccountStore.useCurrentLocation ? await getLocation() : dummyAccountStore.homeLocation.coordinates;
+    const originLocation = guestAccountStore.useCurrentLocation ? await getLocation() : guestAccountStore.homeLocation.coordinates;
 
     if (originLocation == null) {
         return null;
     }
 
-    let hobbies = dummyAccountStore.hobbies;
+    let hobbies = guestAccountStore.hobbies;
+    console.log(guestAccountStore.hobbies);
     const places = [];
     // For each hobby, get place objects using getTextSearch and add them to places array.
     /*** Handle these asynchronously ***/
@@ -57,7 +58,7 @@ async function getTextSearch(originLocation, hobby) {
 // It adds distance in miles, photo urls, and the website link to each place object.
 async function getDistanceAndDetails(places) {
     console.log("Getting distance and details");
-    const originLocation = dummyAccountStore.useCurrentLocation ? await getLocation() : dummyAccountStore.homeLocation.coordinates;
+    const originLocation = guestAccountStore.useCurrentLocation ? await getLocation() : guestAccountStore.homeLocation.coordinates;
     const promises = Array.from({ length: places.length }, async (_, i) => {
         const destinationLocation = places[i].geometry.location;
         const placeId = places[i].place_id;

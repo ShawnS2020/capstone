@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableWithoutFeedback, TextInput, Switch } f
 import { inject, observer } from 'mobx-react';
 import { getPredictions, getCoordinates } from '../api/PlaceAutocomplete';
 
-export default inject('dummyAccountStore')(observer(({ setHomeLocation, scrollViewRef, textInputYPosition }) => {
+export default inject('guestAccountStore')(observer(({ setHomeLocation, scrollViewRef, textInputYPosition }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [predictions, setPredictions] = useState([]);
 

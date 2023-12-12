@@ -5,7 +5,7 @@ import RoundButton from '../components/RoundButton';
 
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
-export default inject("dummyAccountStore")(observer(({ dummyAccountStore, navigation }) => {
+export default inject("guestAccountStore")(observer(({ guestAccountStore, navigation }) => {
   const [username, setUsername] = useState('');
   const [hobbyInput, setHobbyInput] = useState('');
   const [hobbies, setHobbies] = useState([]);
@@ -22,8 +22,8 @@ export default inject("dummyAccountStore")(observer(({ dummyAccountStore, naviga
   }
 
   function handleNextButtonClick() {
-    dummyAccountStore.changeHobbies(hobbies);
-    dummyAccountStore.changeUsername(username)
+    guestAccountStore.changeHobbies(hobbies);
+    guestAccountStore.changeUsername(username)
     navigation.navigate("Setup 3");
   }
 
