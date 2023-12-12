@@ -28,8 +28,28 @@ const GlobalProvider = ({ children }) => {
       return;
     }
     setPlaces(places);
-    console.log("Places set");
-    await getDistanceAndDetails(places);
+    console.log("Places set.");
+    console.log("Getting distance and details.");
+    // The FlatList containing places will re-render when places is updated.
+    // Each place is updated, a new places array is created from it, and setPlaces is called with the new array
+    // This causes many re-renders of the FlatList rather than having to wait for all places to be updated.
+    // Wrap setPlaces in a promise so that we can await it.
+    const setPlacesAsync = (i, updatedPlace) => new Promise(resolve => {
+      setPlaces(prevPlaces => {
+        const updatedPlaces = [...prevPlaces];
+        updatedPlaces[i] = updatedPlace;
+        resolve();
+        return updatedPlaces;
+      });
+    });
+
+    // For each place, call getDistanceAndDetails and use that new place to update places array.
+    const promises = places.map(async (place, i) => {
+      const updatedPlace = await getDistanceAndDetails(place);
+      return setPlacesAsync(i, updatedPlace);
+    });
+
+    await Promise.all(promises);
     console.log("Distance and details set");
   }
 

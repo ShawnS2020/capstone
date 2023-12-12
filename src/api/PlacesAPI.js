@@ -54,31 +54,27 @@ async function getTextSearch(originLocation, hobby) {
     return places;
 }
 
-// This function modifies the places array that has already been displayed in the user's feed.
-// It adds distance in miles, photo urls, and the website link to each place object.
-async function getDistanceAndDetails(places) {
-    console.log("Getting distance and details");
+// This function modifies a place object that has already been displayed in the user's feed.
+// It adds distance in miles, photo urls, and the website link to the place object.
+async function getDistanceAndDetails(place) {
     const originLocation = guestAccountStore.useCurrentLocation ? await getLocation() : guestAccountStore.homeLocation.coordinates;
-    const promises = Array.from({ length: places.length }, async (_, i) => {
-        const destinationLocation = places[i].geometry.location;
-        const placeId = places[i].place_id;
-        // The text search API call only gets a limited set of details so we call Place Details API for a full set.
-        // We also get the distance from the user's location to the place.
-        // Run getDistance and getDetails in parallel.
-        const [distance, details] = await Promise.all([
-            getDistance(originLocation, destinationLocation),
-            getDetails(placeId)
-        ]);
-        // Convert distance from meters to miles and round to the nearest 100th.
-        let distanceMi = Math.round(distance * 0.000621371192 * 100) / 100;
-        // Modify the place object in places to include distance and details.
-        places[i].distance = distanceMi;
-        for (const [key, value] of Object.entries(details)) {
-            places[i][key] = value;
-        }
-    });
-    // Wait for all promises to resolve.
-    await Promise.all(promises);
+    const destinationLocation = place.geometry.location;
+    const placeId = place.place_id;
+    // The text search API call only gets a limited set of details so we call Place Details API for a full set.
+    // We also get the distance from the user's location to the place.
+    // Run getDistance and getDetails in parallel.
+    const [distance, details] = await Promise.all([
+        getDistance(originLocation, destinationLocation),
+        getDetails(placeId)
+    ]);
+    // Convert distance from meters to miles and round to the nearest 100th.
+    let distanceMi = Math.round(distance * 0.000621371192 * 100) / 100;
+    // Return a new object that includes the original place data, the distance, and the details.
+    return {
+        ...place,
+        distance: distanceMi,
+        ...details
+    };
 }
 
 async function getDistance(origin, destination) {
