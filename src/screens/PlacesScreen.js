@@ -56,6 +56,7 @@ export default function PlacesScreen({ isMenuOpen }) {
       {/* Create a FlatList for each place */}
       <FlatList
         data={places}
+        extraData={places}
         ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
         renderItem={({ item: place }) => (
           <View style={styles.placeContainer}>
