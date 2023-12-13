@@ -10,7 +10,6 @@ async function getPlaces() {
     }
 
     let hobbies = guestAccountStore.hobbies;
-    console.log(guestAccountStore.hobbies);
     const places = [];
     // For each hobby, get place objects using getTextSearch and add them to places array.
     /*** Handle these asynchronously ***/

@@ -1,10 +1,11 @@
-import {View, Text, ImageBackground, StyleSheet, Image} from 'react-native';
+import {View, Text, ImageBackground, StyleSheet, FlatList} from 'react-native';
+import { inject, observer } from 'mobx-react';
 import SubforumRecommendation from '../components/SubforumRecommendation';
 import RoundButton from '../components/RoundButton';
 
 const image = {uri: 'https://img.freepik.com/premium-vector/various-hobbies-icons-selection-white-background-vector_532963-598.jpg?w=1380'};
 
-export default function SetupScreen4({ navigation }) {
+export default inject('guestAccountStore')(observer(({ guestAccountStore, navigation }) => {
   function handleNextButtonClick() {
     navigation.navigate("Nav Tabs");
   }
@@ -17,20 +18,17 @@ export default function SetupScreen4({ navigation }) {
     <ImageBackground source={image}>
       <View style={styles.container}> 
         <Text style={{fontSize: 20, marginTop: '10%', }}>Last step! Join some communities and get chatting!</Text>
-        <View style={{ alignContent:"center" }}> 
-          <SubforumRecommendation
-            title="Hiking"
-            numMembers={200}
-          />
-          <SubforumRecommendation
-            title="Music"
-            numMembers={350}
-          />
-          <SubforumRecommendation
-            title="Movies"
-            numMembers={400}
-          />
-        </View>
+        <FlatList
+          style={{ width: '100%' }}
+          data={guestAccountStore.hobbies}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item: hobby }) => (
+            <SubforumRecommendation
+              title={hobby}
+              numMembers={(Math.floor(Math.random() * 100) + 1) * 10}
+            />
+          )}
+        />
         <View style={styles.lower}>
           <RoundButton
             onPress={handleNextButtonClick}
@@ -44,7 +42,7 @@ export default function SetupScreen4({ navigation }) {
     </View> 
     </ImageBackground>
     );
-}
+}));
           
 const styles = StyleSheet.create({
   container: {

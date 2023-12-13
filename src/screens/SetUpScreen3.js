@@ -38,7 +38,7 @@ export default inject("guestAccountStore")(observer(({ guestAccountStore, naviga
                         <HomeLocation setHomeLocation={setHomeLocation} />
                     </View>
                     <View style={styles.useCurrentLocationSwitch}>
-                      <Text style={{fontSize: 20}}>Enable device location</Text>
+                      <Text style={{fontSize: 20}}>Use current location</Text>
                       <Switch
                         value={guestAccountStore.useCurrentLocation}
                         onValueChange={toggleUseCurrentLocation}
