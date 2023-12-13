@@ -93,8 +93,11 @@ export default function PlacesScreen({ isMenuOpen }) {
               {/* if place.distance is null then indicate loading */}
               <Text>{place.distance == null ? 'loading distance...' : place.distance + ' miles'}</Text>
               {/* if place.website is null then indicate loading */}
-              {place.website == null ?
-                <Text>loading website...</Text> :
+              {place.website === null ?
+                <Text>loading website...</Text>
+              : place.website == 'none' ?
+                null
+              : 
                 <TouchableOpacity onPress={() => Linking.openURL(place.website)}>
                   <Text style={styles.websiteLink}>{place.website}</Text>
                 </TouchableOpacity>

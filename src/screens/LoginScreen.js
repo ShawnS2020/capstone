@@ -78,6 +78,7 @@ export default function LoginScreen({ route, navigation }) {
                     >
                         <Text style = { styles.buttonContent }>{route.name == "Login" ? "Skip" : "Bypass (Test)"}</Text>
                     </TouchableOpacity> 
+                    {/*
                     {route.name == "Login" ?
                         <TouchableOpacity style={ styles.button }
                              onPress={() => navigation.navigate("Setup 1")}
@@ -86,6 +87,7 @@ export default function LoginScreen({ route, navigation }) {
                         </TouchableOpacity> 
                     : null
                     }
+                    */}
                 </View>
             </View>
         </ScrollView>

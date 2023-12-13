@@ -44,13 +44,19 @@ const GlobalProvider = ({ children }) => {
     });
 
     // For each place, call getDistanceAndDetails and use that new place to update places array.
-    const promises = places.map(async (place, i) => {
-      const updatedPlace = await getDistanceAndDetails(place);
-      return setPlacesAsync(i, updatedPlace);
-    });
-
-    await Promise.all(promises);
-    console.log("Distance and details set");
+    // We do this in chunks of 10 places at a time with a 5 sec delay to improve the perceived performance.
+    const chunkSize = 10;
+    let chunkI = 0;
+    for (let i = 0; i < places.length; i += chunkSize) {
+      const chunk = places.slice(i, i + chunkSize);
+      const promises = chunk.map(async (place, j) => {
+        const updatedPlace = await getDistanceAndDetails(place);
+        return setPlacesAsync(i + j, updatedPlace);
+      });
+      Promise.all(promises);
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      chunkI ++;
+    }
   }
 
   return (

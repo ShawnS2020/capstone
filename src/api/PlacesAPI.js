@@ -10,11 +10,13 @@ async function getPlaces() {
     }
 
     let hobbies = guestAccountStore.hobbies;
+    const placesPerHobby = Math.floor(40 / hobbies.length);
+    console.log(`${placesPerHobby}`);
     const places = [];
     // For each hobby, get place objects using getTextSearch and add them to places array.
     /*** Handle these asynchronously ***/
     const promises = Array.from({ length: hobbies.length }, async (_, i) => {
-        let thisHobbyPlaces = await getTextSearch(originLocation, /*radius,*/ hobbies[i]/*, placesPerHobby*/);
+        let thisHobbyPlaces = await getTextSearch(originLocation,  hobbies[i], placesPerHobby);
         places.push(...thisHobbyPlaces);
     });
     await Promise.all(promises);
@@ -25,7 +27,7 @@ async function getPlaces() {
 // This function gets places using the Google Places TextSearch API.
 // The API takes a query and location and returns a list of places.
 // We use a hobby as the query and the user's current or home location as the location.
-async function getTextSearch(originLocation, hobby) {
+async function getTextSearch(originLocation, hobby, placesPerHobby) {
     console.log(`Getting places for hobby: ${hobby}`)
     const URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json' +
         `?query=${hobby}` +
@@ -39,8 +41,9 @@ async function getTextSearch(originLocation, hobby) {
         return;
     }
     let results = json.results;
+    const placeLimit = Math.min(placesPerHobby, results.length);
     let places = [];
-    for (let i = 0; i < results.length; i++) {
+    for (let i = 0; i < placeLimit; i++) {
         let place = {
             ...results[i],
             hobby: hobby,
@@ -49,7 +52,7 @@ async function getTextSearch(originLocation, hobby) {
         };
         places.push(place);
     }
-    console.log(`${hobby}: Got ${places.length} places for hobby: ${hobby}`)
+    console.log(`${hobby}: Got ${placeLimit} places for hobby: ${hobby}`)
     return places;
 }
 
@@ -66,6 +69,7 @@ async function getDistanceAndDetails(place) {
         getDistance(originLocation, destinationLocation),
         getDetails(placeId)
     ]);
+    if (details.website == undefined) details.website = 'none';
     // Convert distance from meters to miles and round to the nearest 100th.
     let distanceMi = Math.round(distance * 0.000621371192 * 100) / 100;
     // Return a new object that includes the original place data, the distance, and the details.
